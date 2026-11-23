@@ -150,26 +150,38 @@ details[open] .chev{transform:rotate(180deg)}
 .themebtn{background:var(--sage-soft);color:var(--ink);display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;border-radius:999px;flex:none}
 .themebtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .themebtn svg{width:18px;height:18px}
-.ptmini{position:fixed;top:calc(env(safe-area-inset-top) + 6px);left:50%;transform:translateX(-50%);z-index:40;width:min(calc(100% - 24px),736px);height:30px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:0 4px 14px rgba(0,0,0,.14);font-size:.78rem;line-height:1;color:var(--ink);touch-action:pan-y;transition:transform .22s ease,opacity .22s ease;cursor:pointer;-webkit-user-select:none;user-select:none}
+.ptmini{position:fixed;top:calc(env(safe-area-inset-top) + 4px);left:50%;transform:translateX(-50%);z-index:40;width:min(calc(100% - 12px),760px);height:36px;display:flex;align-items:center;gap:7px;padding:0 2px 0 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:0 4px 14px rgba(0,0,0,.14);font-size:.82rem;line-height:1;letter-spacing:-.1px;color:var(--ink);touch-action:pan-y;transition:transform .22s ease,opacity .22s ease;cursor:pointer;-webkit-user-select:none;user-select:none}
 .ptmini.dragging{transition:none}
 .ptmini .txt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
-.ptmini .mini-x{width:26px;height:26px;min-height:0;padding:0;border:0;border-radius:999px;background:transparent;color:var(--muted);display:grid;place-items:center;flex:none}
+.ptmini .mini-x{width:28px;height:28px;min-height:0;padding:0;border:0;border-radius:999px;background:transparent;color:var(--muted);display:grid;place-items:center;flex:none}
 .ptmini .mini-x svg{width:14px;height:14px}
 .sdot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--ok)}
 .sdot.warn{background:var(--warn)}.sdot.stop{background:var(--stop)}.sdot.eol{background:#8b7bd8}
 .ptbubble{position:fixed;z-index:40;width:48px;height:48px;min-height:0;padding:0;border:0;border-radius:16px;background:color-mix(in srgb,var(--ink) 58%,transparent);color:var(--bg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.25);display:grid;place-items:center;touch-action:none;transition:left .25s ease,top .25s ease,transform .2s ease}
 .ptbubble.dragging{transition:none;transform:scale(1.08)}
-.ptbubble svg{width:24px;height:24px}
+.ptbubble svg{width:30px;height:30px}
 .ptbubble .sdot{position:absolute;top:7px;right:7px;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 58%,transparent)}
 .ptmini[hidden],.ptbubble[hidden]{display:none}
+.ptback{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s ease}
+.ptback.on{opacity:1;pointer-events:auto}
+.ptsheet{position:fixed;top:0;left:0;right:0;z-index:50;max-width:760px;margin:0 auto;background:var(--bg);background-image:linear-gradient(var(--card),var(--card));border:1px solid var(--line);border-top:0;border-radius:0 0 24px 24px;box-shadow:0 12px 36px rgba(0,0,0,.3);padding:calc(env(safe-area-inset-top) + 12px) 16px 0;transform:translateY(-105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+.ptsheet.open{transform:none;visibility:visible}
+.ptsheet.dragging{transition:none}
+.ptsheet .sh-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px;touch-action:none}
+.ptsheet .sh-body{max-height:calc(82vh - 90px);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:12px;padding-bottom:4px}
+.ptsheet .sh-grab{touch-action:none;padding:12px 0 10px;display:grid;place-items:center;cursor:grab}
+.ptsheet .sh-grab span{width:44px;height:5px;border-radius:3px;background:color-mix(in srgb,var(--muted) 55%,transparent)}
+.ptsheet .done{min-height:38px;padding:6px 16px;font-size:.9rem}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.star,.bat,.bat svg{animation:none!important}.bat{transform:translate(60vw,14vh)}}
 @media (min-width:700px){.ome .big{font-size:2.8rem}}
 </style>
 </head>
 <body>
 <div class="sky" aria-hidden="true"><div class="moon"></div><div id="stars"></div><div class="bat"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div><div class="bat b2"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div><div class="bat b3"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div></div>
-<div id="ptMini" class="ptmini" hidden role="button" tabindex="0" aria-label="ข้อมูลผู้ป่วย: แตะเพื่อเปิด ปัดซ้าย/ขวาเพื่อย่อเป็นไอคอน"><span class="sdot"></span><span class="txt"></span><button type="button" class="mini-x" aria-label="ย่อเป็นไอคอน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></svg></button></div>
-<button id="ptBubble" class="ptbubble" type="button" hidden aria-label="แสดงแถบข้อมูลผู้ป่วย"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="sdot"></span></button>
+<div id="ptMini" class="ptmini" hidden role="button" tabindex="0" aria-label="ข้อมูลผู้ป่วย: แตะเพื่อแก้ไข ปัดซ้าย/ขวาเพื่อย่อเป็นไอคอน"><span class="sdot"></span><span class="txt"></span><button type="button" class="mini-x" aria-label="ย่อเป็นไอคอน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></svg></button></div>
+<button id="ptBubble" class="ptbubble" type="button" hidden aria-label="แสดงแถบข้อมูลผู้ป่วย"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" opacity=".28"/><circle cx="12" cy="12" r="7.5" opacity=".45"/><circle cx="12" cy="12" r="5"/></svg><span class="sdot"></span></button>
+<div id="ptBack" class="ptback"></div>
+<div id="ptSheet" class="ptsheet" role="dialog" aria-modal="true" aria-label="ข้อมูลผู้ป่วย"><div class="sh-head"><div style="min-width:0"><h2>ข้อมูลผู้ป่วย</h2><div class="ptsum" id="shSum"></div></div><button type="button" class="btn done" id="shDone">เสร็จ</button></div><div class="sh-body" id="shBody"></div><div class="sh-grab" aria-hidden="true"><span></span></div></div>
 <div class="wrap">
   <header class="top">
     <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/><path d="M9 12h6M12 9v6"/></svg></div>
@@ -313,7 +325,7 @@ details[open] .chev{transform:rotate(180deg)}
     <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
   </section>
 
-  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.7</p>
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.8</p>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
@@ -814,7 +826,7 @@ function update(){
   const v=x=>$(x).value===''?'-':$(x).value;
   $('#ptSum').textContent=`อายุ ${v('#age')} · eGFR ${v('#egfr')} · RR ${v('#rr')} · ${sedTxt}${p.pps!=null?' · PPS '+p.pps+'%':''}${p.liver?' · ตับบกพร่อง':''} · ยา ${S.rows.length} รายการ`;
   fillRowOrders();
-  renderMedsSummary(T,p); renderSafety(T,p); renderMini(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
+  renderMedsSummary(T,p); renderSafety(T,p); renderMini(T,p); if($('#shSum'))$('#shSum').textContent=$('#ptSum').textContent; renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
 }
 $('#addRow').addEventListener('click',()=>{S.rows.push({drug:'mosyr',qty:2.5,cnt:1,prn:true});renderRows();update();});
 ['#age','#egfr','#rr','#sed','#pps','#pin','#cyan','#trig','#myo','#liver','#pain','#sdVol','#sdDil','#sdDev','#sdDur','#sdLen'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
@@ -830,13 +842,37 @@ function renderMini(T,p){
   bub.setAttribute('aria-label','แสดงแถบข้อมูลผู้ป่วย: '+parts.join(', '));
 }
 function placeBubble(){const w=innerWidth,h=innerHeight;bub.style.top=Math.min(Math.max(bpos.y*h,56),h-140)+'px';bub.style.left=(bpos.side==='left'?10:w-58)+'px';}
-function syncMini(){mini.hidden=ptVisible||miniCollapsed;bub.hidden=ptVisible||!miniCollapsed;if(!bub.hidden)placeBubble();}
+function syncMini(){if(shOpen){mini.hidden=bub.hidden=true;return;}mini.hidden=ptVisible||miniCollapsed;bub.hidden=ptVisible||!miniCollapsed;if(!bub.hidden)placeBubble();}
 function saveMini(){try{localStorage.setItem('pd_mini',miniCollapsed?'1':'0');localStorage.setItem('pd_bpos',JSON.stringify(bpos));}catch(e){}}
 function collapseMini(side){if(side)bpos.side=side;miniCollapsed=true;saveMini();
   mini.style.opacity='0';mini.style.transform=`translateX(calc(-50% + ${bpos.side==='left'?'-':''}60vw))`;
   setTimeout(()=>{mini.style.opacity='';mini.style.transform='';syncMini();},200);}
 function expandMini(){miniCollapsed=false;saveMini();syncMini();}
-function openPatient(){$('#ptCard').open=true;window.scrollTo({top:0,behavior:'smooth'});}
+// patient sheet: drops down from the top over the current page; swipe up (or tap outside / เสร็จ) to close
+const sheet=$('#ptSheet'),shBody=$('#shBody'),back=$('#ptBack');let shPh=null,shOpen=false;
+function openPatient(){if(shOpen)return;const card=$('#ptCard');
+  const kids=[...card.children].filter(x=>x.tagName!=='SUMMARY');
+  shPh=el('div',{});shPh.style.height=kids.reduce((h,k)=>h+k.offsetHeight,0)+'px';
+  kids[0]?card.insertBefore(shPh,kids[0]):card.append(shPh);
+  kids.forEach(k=>shBody.append(k));
+  $('#shSum').textContent=$('#ptSum').textContent;
+  shOpen=true;mini.hidden=true;bub.hidden=true;sheet.classList.add('open');back.classList.add('on');
+  try{document.documentElement.style.overflow='hidden'}catch(e){}}
+function closePatient(){if(!shOpen)return;shOpen=false;sheet.style.transform='';sheet.classList.remove('open');back.classList.remove('on');
+  document.documentElement.style.overflow='';
+  setTimeout(()=>{if(shOpen)return;[...shBody.children].forEach(k=>shPh.parentNode.insertBefore(k,shPh));shPh.remove();shPh=null;syncMini();},280);}
+$('#shDone').addEventListener('click',closePatient);back.addEventListener('click',closePatient);
+addEventListener('keydown',e=>{if(e.key==='Escape')closePatient();});
+let sd=null;
+[sheet.querySelector('.sh-head'),sheet.querySelector('.sh-grab')].forEach(h=>{
+  h.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;sd={y:e.clientY,dy:0};sheet.classList.add('dragging');try{h.setPointerCapture(e.pointerId)}catch(_){}});
+  h.addEventListener('pointermove',e=>{if(!sd)return;sd.dy=Math.min(0,e.clientY-sd.y);sheet.style.transform=`translateY(${sd.dy}px)`;});
+  const end=()=>{if(!sd)return;const dy=sd.dy;sd=null;sheet.classList.remove('dragging');if(dy<-50)closePatient();else sheet.style.transform='';};
+  h.addEventListener('pointerup',end);h.addEventListener('pointercancel',end);});
+// swipe up on the body when it is scrolled to the end also closes
+let bt=null;
+shBody.addEventListener('touchstart',e=>{bt={y:e.touches[0].clientY,atEnd:shBody.scrollTop+shBody.clientHeight>=shBody.scrollHeight-2};},{passive:true});
+shBody.addEventListener('touchend',e=>{if(!bt)return;const dy=e.changedTouches[0].clientY-bt.y;if(bt.atEnd&&dy<-70)closePatient();bt=null;},{passive:true});
 new IntersectionObserver(es=>{ptVisible=es[0].isIntersecting;syncMini();}).observe($('#ptCard'));
 addEventListener('resize',()=>{if(!bub.hidden)placeBubble();});
 // strip: tap = open patient card, swipe left/right/up = shrink to bubble
