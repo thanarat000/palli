@@ -69,6 +69,7 @@ button{font:inherit;cursor:pointer;border:none;border-radius:14px;min-height:46p
 .seg button[aria-pressed="true"]{background:var(--sage);color:var(--on-accent);border-color:var(--sage)}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;padding:10px;border-radius:14px;background:var(--bg)}
 .row .full{grid-column:1/-1}
+.grid .full{grid-column:1/-1}
 .roword{grid-column:1/-1;background:var(--card);border-radius:10px;padding:8px 10px;font-size:.9rem;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
 .roword b{font-weight:600}
 .roword .o{color:var(--sage);font-weight:600;white-space:nowrap}
@@ -94,6 +95,21 @@ button{font:inherit;cursor:pointer;border:none;border-radius:14px;min-height:46p
 .alert.stop{background:var(--stop-soft);color:var(--ink);border-left:4px solid var(--stop)}
 .alert.info{background:var(--sage-soft);color:var(--ink);border-left:4px solid var(--sage)}
 .alerts{display:flex;flex-direction:column;gap:8px}
+.chk{display:flex;align-items:center;gap:10px;color:var(--ink);font-size:.95rem;min-height:40px}
+.chk input{width:22px;height:22px;min-height:0;accent-color:var(--sage);flex:none}
+.chks{display:grid;grid-template-columns:1fr;gap:2px;margin-top:4px}
+@media (min-width:560px){.chks{grid-template-columns:1fr 1fr}}
+.verdict{border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;border-left:5px solid var(--sage);background:var(--sage-soft)}
+.verdict.warn{border-color:var(--warn);background:var(--warn-soft)}
+.verdict.stop{border-color:var(--stop);background:var(--stop-soft)}
+.verdict.eol{border-color:#8b7bd8;background:color-mix(in srgb,#8b7bd8 14%,transparent)}
+.verdict b{font-size:1.02rem}
+.verdict .why{font-size:.88rem;color:var(--muted)}
+.acts{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:.93rem}
+details.nal{border:1.5px solid var(--line);border-radius:16px;padding:10px 14px}
+details.nal summary{cursor:pointer;font-weight:600;color:var(--ink)}
+details.nal h4{margin:12px 0 4px;font-size:.95rem}
+details.nal ul{margin:0;padding-left:20px;font-size:.9rem;display:flex;flex-direction:column;gap:4px}
 .addon{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:12px;border-radius:14px;background:var(--bg);align-items:start}
 .addon input[type=checkbox]{width:24px;height:24px;min-height:0;accent-color:var(--sage);margin-top:3px}
 .addon .body{display:flex;flex-direction:column;gap:8px;min-width:0}
@@ -153,15 +169,36 @@ details[open] .chev{transform:rotate(180deg)}
       <label class="f">อายุ (ปี)<input id="age" type="number" inputmode="numeric" min="18" max="120" value="68"></label>
       <label class="f">eGFR (mL/min)<input id="egfr" type="number" inputmode="numeric" min="0" max="150" value="55"></label>
       <label class="f">อัตราหายใจ (/min)<input id="rr" type="number" inputmode="numeric" min="0" max="60" value="16"></label>
-      <label class="f">ระดับความง่วง (sedation)
+      <label class="f full">ความง่วง (POSS: Pasero Opioid-induced Sedation Scale)
         <select id="sed">
-          <option value="1">1 · ตื่นดี</option>
+          <option value="0">S · หลับปกติ ปลุกตื่นง่าย</option>
+          <option value="1" selected>1 · ตื่นดี</option>
           <option value="2">2 · ง่วงเล็กน้อย ปลุกตื่นง่าย</option>
-          <option value="3">3 · ง่วงมาก หลับขณะคุย</option>
-          <option value="4">4 · ปลุกไม่ค่อยตื่น</option>
+          <option value="3">3 · ง่วงบ่อย หลับขณะคุย</option>
+          <option value="4">4 · ปลุกไม่ตื่น ตอบสนองน้อยมาก</option>
+        </select></label>
+      <label class="f full">PPS (Palliative Performance Scale)
+        <select id="pps">
+          <option value="">ไม่ระบุ</option>
+          <option value="100">100% · ปกติ ไม่มีอาการ</option>
+          <option value="90">90% · ปกติ มีอาการเล็กน้อย</option>
+          <option value="80">80% · ทำกิจวัตรได้ ต้องออกแรง</option>
+          <option value="70">70% · ทำงานไม่ได้ ดูแลตัวเองได้</option>
+          <option value="60">60% · ช่วยตัวเองได้บ้าง ต้องช่วยบางครั้ง</option>
+          <option value="50" selected>50% · นั่ง/นอนเป็นส่วนใหญ่</option>
+          <option value="40">40% · อยู่บนเตียงเป็นส่วนใหญ่</option>
+          <option value="30">30% · ติดเตียง กินได้น้อย</option>
+          <option value="20">20% · ติดเตียง จิบน้ำได้ ซึม/หลับมาก</option>
+          <option value="10">10% · ติดเตียง ดูแลช่องปากอย่างเดียว ซึม/โคม่า</option>
         </select></label>
     </div>
-    <label class="f" style="flex-direction:row;align-items:center;gap:10px;color:var(--ink)"><input id="liver" type="checkbox" style="width:22px;height:22px;min-height:0;accent-color:var(--sage)"> ตับบกพร่องรุนแรง / cirrhosis</label>
+    <div class="chks" role="group" aria-label="อาการร่วม">
+      <label class="chk"><input id="pin" type="checkbox"> รูม่านตาเล็กเท่าหัวเข็ม</label>
+      <label class="chk"><input id="cyan" type="checkbox"> เขียว หรือ SpO₂ &lt; 90%</label>
+      <label class="chk"><input id="trig" type="checkbox"> เพิ่งเพิ่ม/เริ่ม opioid หรือไตแย่ลง (24–72 ชม.)</label>
+      <label class="chk"><input id="myo" type="checkbox"> กระตุก (myoclonus) เพ้อ เห็นภาพหลอน</label>
+      <label class="chk"><input id="liver" type="checkbox"> ตับบกพร่องรุนแรง / cirrhosis</label>
+    </div>
   </details>
 
   <!-- TAB 1: current meds -->
@@ -176,6 +213,10 @@ details[open] .chev{transform:rotate(180deg)}
       <div class="ome"><span class="big" id="omeBig">0</span><span>mg/วัน</span><span id="omePill"></span></div>
       <div class="breakdown" id="omeBreak"></div>
       <div class="alerts" id="medAlerts"></div>
+    </div>
+    <div class="card" id="safeCard">
+      <div><h2>ประเมินความง่วงและการหายใจ</h2><p class="note">ใช้ RR, POSS, PPS และอาการร่วมจากข้อมูลผู้ป่วยด้านบน</p></div>
+      <div id="safeOut" style="display:flex;flex-direction:column;gap:12px"></div>
     </div>
   </section>
 
@@ -251,12 +292,14 @@ details[open] .chev{transform:rotate(180deg)}
         <li><a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm" target="_blank" rel="noopener">CDC opioid guideline (2022)</a></li>
         <li><a href="https://www.nice.org.uk/guidance/cg140/resources/palliative-care-for-adults-strong-opioids-for-pain-relief-35109564116677" target="_blank" rel="noopener">NICE CG140</a></li>
         <li>ยา syringe driver: Palliative Care Formulary, The Syringe Driver (Dickman &amp; Schneider)</li>
+        <li>Naloxone ในผู้ป่วยใช้ opioid ประจำ: Palliative Care Formulary; Scottish Palliative Care Guidelines (Reversal of opioid toxicity)</li>
+        <li>Pasero Opioid-induced Sedation Scale (POSS) · Palliative Performance Scale v2 (Victoria Hospice)</li>
       </ul>
     </div>
     <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
   </section>
 
-  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.5</p>
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.6</p>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
@@ -348,7 +391,7 @@ function totals(){
   S.rows.forEach(r=>{if(r.drug==='methadone'&&+r.qty>0)hasMeth=true; if(r.prn&&D[r.drug].sr)srPrn.push(D[r.drug].n);});
   return {sch,prn,total:sch+prn,classes,tram,hasPatch,hasPeth,hasMeth,srPrn};
 }
-function pt(){return {age:+$('#age').value||0,egfr:$('#egfr').value===''?null:+$('#egfr').value,rr:+$('#rr').value||0,sed:+$('#sed').value,liver:$('#liver').checked};}
+function pt(){const c=x=>$(x).checked;return {age:+$('#age').value||0,egfr:$('#egfr').value===''?null:+$('#egfr').value,rr:+$('#rr').value||0,sed:+$('#sed').value,pps:$('#pps').value===''?null:+$('#pps').value,pin:c('#pin'),cyan:c('#cyan'),trig:c('#trig'),myo:c('#myo'),liver:c('#liver')};}
 function frail(p){return p.age>=75||(p.egfr!=null&&p.egfr<30)||p.sed>=3||p.liver;}
 
 // rounding to available step: prefer nearest, never round up by > 10%
@@ -357,7 +400,9 @@ function roundStep(x,step){ if(x<=0)return 0; const lo=Math.floor(x/step+1e-9)*s
 // ---------- patient summary & safety ----------
 function patientAlerts(p,ctx){
   const a=[];
-  if(p.sed>=3||(p.rr>0&&p.rr<10)) a.push(['stop','ง่วงมาก/หายใจช้า: ห้ามเพิ่มโดส opioid ประเมินผู้ป่วยทันที พิจารณาลดโดสหรือ naloxone ตามแนวทาง รพ.']);
+  const sf=safety(p,{});
+  if(sf.lv==='stop'||sf.lv==='warn') a.push([sf.lv,sf.title+': ห้ามเพิ่มโดส ดูแนวทางที่การ์ด "ประเมินความง่วงและการหายใจ" หน้ายาเดิม']);
+  else if(sf.lv==='eol') a.push(['info','PPS ต่ำ ซึม/หายใจช้า น่าจะจากโรคระยะท้าย: ไม่เพิ่มโดสเพื่อให้หลับ ดูการ์ด "ประเมินความง่วงและการหายใจ"']);
   if(p.egfr!=null&&p.egfr<30&&ctx==='morphine') a.push(['stop','eGFR < 30: เลี่ยง morphine (metabolite สะสม) แนะนำ fentanyl แทน']);
   else if(p.egfr!=null&&p.egfr<60&&ctx==='morphine') a.push(['warn','eGFR 30–60: ใช้ morphine ได้ด้วยความระวัง ลดโดส/ยืดเวลา และเฝ้าระวังง่วง ซึม myoclonus']);
   if(p.liver&&ctx==='morphine') a.push(['warn','ตับบกพร่องรุนแรง: เริ่มโดสต่ำ ยืดช่วงเวลา เลี่ยง SR ในช่วงปรับยา']);
@@ -365,6 +410,85 @@ function patientAlerts(p,ctx){
   return a;
 }
 function renderAlerts(box,list){box.innerHTML='';list.forEach(([k,t])=>box.append(el('div',{class:'alert '+k},el('b',{},k==='stop'?'⛔':k==='warn'?'⚠':'ℹ'),el('span',{},t))));}
+
+// ---------- sedation / respiratory safety ----------
+// POSS (Pasero) + RR + PPS. Naloxone criteria and dosing: Palliative Care Formulary,
+// Scottish Palliative Care Guidelines "Reversal of opioid toxicity".
+function safety(p,T){
+  const rr=p.rr>0?p.rr:null, rr8=rr!=null&&rr<8, rr10=rr!=null&&rr<10;
+  const low=p.pps!=null&&p.pps<=30, opioidCue=p.pin||p.trig;
+  const longActing=T&&T.longActing, kidney=p.egfr!=null&&p.egfr<30;
+  const r={lv:'ok',title:'',why:'',acts:[],nal:false,notes:[]};
+  const concern=p.sed>=3||rr10||p.cyan;
+  if(low&&concern&&!opioidCue){
+    r.lv='eol'; r.title='น่าจะเป็นการดำเนินโรคระยะท้าย มากกว่า opioid เกินขนาด';
+    r.why=`PPS ${p.pps}% ซึม/หายใจช้าเป็นไปตามระยะโรค และไม่มีรูม่านตาเล็กหรือการเพิ่มยาล่าสุด`;
+    r.acts=['ไม่ให้ naloxone: ไม่ช่วยให้ดีขึ้น และทำให้ปวดรุนแรง กระสับกระส่าย ทุกข์ทรมาน',
+      'ไม่หยุด opioid ทันที คงโดสเดิมถ้ายังมีสีหน้าปวด คราง หรือกระสับกระส่าย ถ้าสงบดีและ RR ช้ามาก พิจารณาลด 25–50%',
+      'กลืนไม่ได้: เปลี่ยนเป็น SC syringe driver (ใช้หน้า "แปลงยา")',
+      'ไม่ต้องปลุกเพื่อวัดคะแนนง่วง ประเมินความสุขสบายจากสีหน้า เสียง ท่าทาง',
+      'หายใจแบบ Cheyne-Stokes หรือหยุดหายใจเป็นช่วง พบได้ตามธรรมชาติ อธิบายครอบครัว',
+      'ทบทวนเป้าหมายการดูแล การไม่ใส่ท่อช่วยหายใจ และความต้องการของครอบครัว'];
+    if(kidney) r.notes.push(['warn','eGFR < 30: morphine สะสมได้ ถ้ามีกระตุกหรือเพ้อร่วม ให้ลดโดสหรือเปลี่ยนเป็น fentanyl']);
+    return r;}
+  if(low&&concern&&opioidCue){
+    r.lv='warn'; r.title='PPS ต่ำ แต่มีเหตุให้สงสัย opioid เกินขนาด';
+    r.why=`PPS ${p.pps}% ร่วมกับ${p.pin?'รูม่านตาเล็ก':''}${p.pin&&p.trig?' และ':''}${p.trig?'เพิ่งเพิ่มยา/ไตแย่ลง':''}`;
+    r.acts=['งดยามื้อถัดไป หรือลด syringe driver 25–50% แต่ไม่หยุดยาทั้งหมด',
+      'เฝ้า RR และความสุขสบายทุก 1 ชม. จน RR ≥ 10 หรือคงที่',
+      'Naloxone ให้เฉพาะเมื่อ RR < 8 ร่วมกับปลุกไม่ตื่นหรือเขียว และการแก้ไขยังตรงกับเป้าหมายการดูแล ให้ขนาดเล็กทีละน้อย (ดูด้านล่าง)',
+      'ถ้าผู้ป่วยใกล้เสียชีวิตและดูสงบ ไม่จำเป็นต้องให้ naloxone คุยกับครอบครัวก่อน'];
+    r.nal=rr8&&(p.sed===4||p.cyan);
+    return r;}
+  if(p.sed===4&&(rr8||p.cyan)){
+    r.lv='stop'; r.title='สงสัย opioid กดการหายใจ: ให้ naloxone';
+    r.why=`ปลุกไม่ตื่น (POSS 4) ร่วมกับ${rr8?` RR ${rr}/นาที`:''}${rr8&&p.cyan?' และ':''}${p.cyan?' เขียว/SpO₂ ต่ำ':''}`;
+    r.acts=['หยุด opioid ทุกตัว: ปิด syringe driver แกะ patch งดมื้อถัดไป','เรียกปลุก กระตุ้น ให้ออกซิเจน แจ้งแพทย์',
+      'ให้ naloxone ขนาดเล็กทุก 2 นาทีตามด้านล่าง เป้าหมายคือ RR ≥ 8–10 ไม่ใช่ให้ตื่นเต็มที่',
+      'เฝ้า RR, POSS, SpO₂ ทุก 15 นาที'];
+    r.nal=true;
+  } else if(p.sed===4||rr8||(p.sed>=3&&p.cyan)){
+    r.lv='stop'; r.title='อันตราย: หยุดยาและเฝ้าใกล้ชิด';
+    r.why=p.sed===4?'ปลุกไม่ตื่น (POSS 4) แต่ RR ยัง ≥ 8':rr8?`RR ${rr}/นาที แต่ยังปลุกตื่น`:'ง่วงมากร่วมกับเขียว/SpO₂ ต่ำ';
+    r.acts=['หยุด opioid ชั่วคราว: งดมื้อถัดไป ปิด syringe driver','เรียกปลุก กระตุ้นให้หายใจ ให้ออกซิเจน แจ้งแพทย์',
+      'เฝ้า RR, POSS, SpO₂ ทุก 15 นาที','เตรียม naloxone ให้ทันทีถ้า RR < 8 ร่วมกับปลุกไม่ตื่น หรือเขียว/SpO₂ < 90%'];
+  } else if(p.sed===3||rr10){
+    r.lv='warn'; r.title='ง่วงเกินที่ยอมรับได้ ยังไม่ต้องให้ naloxone';
+    r.why=p.sed===3?'POSS 3 หลับขณะคุย':`RR ${rr}/นาที`;
+    r.acts=['ห้ามเพิ่มโดส งดยามื้อถัดไป แล้วลดโดสประจำ 25–50%','เฝ้า RR และ POSS ทุก 1 ชม. จน POSS ≤ 2 และ RR ≥ 10',
+      'ทบทวนยากดประสาทอื่น: midazolam, benzodiazepine, gabapentin/pregabalin, antihistamine'];
+  } else if(p.myo){
+    r.lv='warn'; r.title='ไม่กดการหายใจ แต่มีพิษ opioid ต่อระบบประสาท';
+    r.why='กระตุก (myoclonus) เพ้อ หรือเห็นภาพหลอน';
+    r.acts=['ไม่เพิ่มโดส ลดโดสประจำ 25–50% (ถ้ายังปวด ให้เปลี่ยนชนิด opioid แทนการลด)','ให้น้ำให้เพียงพอ ตรวจการทำงานของไต แคลเซียม และหาสาเหตุเพ้ออื่น',
+      'ไตเสื่อมหรือได้ morphine ขนาดสูง: พิจารณาเปลี่ยนเป็น fentanyl','เพ้อมาก: haloperidol ได้ · naloxone ไม่ช่วยอาการนี้'];
+  } else {
+    r.lv='ok'; r.title='ไม่พบสัญญาณ opioid เกินขนาด ปรับยาได้';
+    r.why=`POSS ${p.sed===0?'S':p.sed}${rr?` · RR ${rr}/นาที`:''}${p.pps!=null?` · PPS ${p.pps}%`:''}`;
+    r.acts=['ประเมิน POSS และ RR ก่อนให้ PRN ทุกครั้ง และหลังเพิ่มโดส (ยากินออกฤทธิ์สูงสุด ~60 นาที ยาฉีด SC ~30 นาที)','ง่วงมักเกิดใน 2–3 วันแรกหลังเพิ่มยา แล้วดีขึ้นเอง'];
+    if(p.pps!=null&&p.pps<=20) r.notes.push(['info',`PPS ${p.pps}%: ง่วง/หลับมากพบได้ตามระยะโรค ให้ประเมินความสุขสบายมากกว่าคะแนนง่วง`]);
+  }
+  if(r.lv==='stop'&&(longActing||kidney)) r.notes.push(['warn',`${longActing?'ได้ยาออกฤทธิ์นาน ('+longActing+')':'eGFR < 30'}: ยาอยู่ในร่างกายนานกว่า naloxone ต้องเฝ้าอย่างน้อย 24 ชม. อาจต้องให้ซ้ำหรือหยดต่อเนื่อง`]);
+  if(p.pps==null&&(r.lv==='stop'||r.lv==='warn')) r.notes.push(['info','ใส่ PPS ด้วย เพื่อแยกยาเกินขนาดออกจากการดำเนินโรคระยะท้าย']);
+  return r;
+}
+function renderSafety(T,p){
+  const box=$('#safeOut'); box.innerHTML='';
+  const longActing=S.rows.filter(r=>+r.qty>0&&!r.prn&&(D[r.drug].sr||D[r.drug].route==='td'||r.drug==='methadone')).map(r=>D[r.drug].n.split(' (')[0]).filter((v,i,a)=>a.indexOf(v)===i).join(', ');
+  const r=safety(p,{longActing});
+  box.append(el('div',{class:'verdict '+r.lv},el('b',{},r.title),el('span',{class:'why'},r.why)));
+  box.append(el('ol',{class:'acts'},r.acts.map(t=>el('li',{},t))));
+  const notes=r.notes.slice();
+  if(p.myo&&!r.title.includes('ระบบประสาท')) notes.push(['warn','กระตุก/เพ้อ/เห็นภาพหลอน = opioid neurotoxicity: ลดโดส 25–50% ให้น้ำ ตรวจไตและแคลเซียม พิจารณาเปลี่ยนเป็น fentanyl naloxone ไม่ช่วยอาการนี้']);
+  if(notes.length){const a=el('div',{class:'alerts'});renderAlerts(a,notes);box.append(a);}
+  const nal=el('details',{class:'nal'});nal.open=r.nal;
+  nal.innerHTML=`<summary>แนวทาง naloxone ในผู้ป่วยที่ใช้ opioid ประจำ</summary>
+  <h4>ให้เมื่อ</h4><ul><li>RR &lt; 8/นาที <b>ร่วมกับ</b> ปลุกไม่ตื่น (POSS 4) หรือเขียว/SpO₂ &lt; 90%</li><li>และการแก้ไขยังตรงกับเป้าหมายการดูแลของผู้ป่วย</li></ul>
+  <h4>ไม่ให้เมื่อ</h4><ul><li>แค่ง่วง (POSS 2–3) แต่ปลุกตื่นและ RR ≥ 8: งดหรือลดยาแล้วเฝ้าดู</li><li>ผู้ป่วยระยะท้าย (PPS ≤ 30) ที่ซึมหรือหายใจช้าจากตัวโรค</li><li>กระตุก เพ้อ เห็นภาพหลอน: ให้ลดหรือเปลี่ยนยาแทน</li></ul>
+  <h4>วิธีให้</h4><ul><li>Naloxone 400 mcg (1 ml) ผสม NSS 9 ml = 40 mcg/ml</li><li>ฉีด IV ครั้งละ 0.5 ml (20 mcg) ทุก 2 นาที จน RR ≥ 8–10 และตอบสนองได้</li><li>ห้ามให้ 400 mcg ทีเดียว: ทำให้ปวดรุนแรงฉับพลัน ถอนยา กระสับกระส่าย</li><li>ไม่มีเส้นเลือด: ให้ SC/IM ได้ แต่ออกฤทธิ์ช้ากว่า ใช้ขนาดตามแนวทาง รพ.</li></ul>
+  <h4>หลังให้</h4><ul><li>Naloxone ออกฤทธิ์ราว 45–90 นาที สั้นกว่า morphine อาจกลับมาซึมอีก เฝ้า RR, POSS ทุก 15 นาที อย่างน้อย 2 ชม. หลังเข็มสุดท้าย</li><li>MST, Kapanol, patch หรือไตวาย: เฝ้า ≥ 24 ชม. ถ้าต้องให้ซ้ำหลายครั้ง พิจารณาหยด naloxone ชั่วโมงละ 2/3 ของขนาดรวมที่ได้ผลครั้งแรก ปรับตาม RR</li><li>ไม่ดีขึ้นหลังให้หลายครั้ง: หาสาเหตุอื่น เช่น midazolam/benzodiazepine, น้ำตาลต่ำ, แคลเซียมสูง, sepsis, stroke, CO₂ คั่ง</li><li>เมื่อกลับมาปกติ เริ่ม opioid ใหม่ที่ราว 50% ของโดสเดิม และแก้สาเหตุ เช่น ไตแย่ลงหรือเพิ่มยาเร็วเกิน เพื่อไม่ให้เกิดวิกฤตปวด</li></ul>`;
+  box.append(nal);
+}
 
 // ---------- TAB 1 ----------
 function renderRows(){
@@ -525,14 +649,16 @@ function renderTit(T,p){
   const seg=$('#tiForm'); seg.innerHTML='';
   TIFORMS.forEach(([k,l])=>seg.append(el('button',{'aria-pressed':String(S.tiForm===k),onclick:()=>{S.tiForm=k;update();}},l)));
   const steps=[],alerts=[];let newOME;
-  const unsafe=p.sed>=3||(p.rr>0&&p.rr<10);
+  const unsafe=p.sed>=3||(p.rr>0&&p.rr<10)||p.cyan||p.myo;
   const nonMorph=[...T.classes].some(c=>c!=='morphine'&&c!=='tramadol'&&c!=='codeine');
   if(nonMorph) alerts.push(['warn','ยาเดิมไม่ใช่ morphine (เช่น fentanyl, oxycodone, pethidine): ใช้หน้า "แปลงยา" ก่อน หน้านี้คำนวณแบบ morphine']);
   if(T.total<=0){
     newOME=frail(p)||(p.egfr!=null&&p.egfr<60)?15:30;
     steps.push(`ผู้ป่วย opioid-naïve: เริ่ม ${newOME} mg OME/วัน (${newOME===15?'ผู้สูงอายุ/ไตเสื่อม/เปราะบาง: Mo 2.5 mg q4h':'Mo 5 mg q4h ตาม WHO/NCCN/ESMO'})`);
+  } else if(unsafe&&p.pps!=null&&p.pps<=30&&!p.pin&&!p.trig){
+    newOME=T.sch; steps.push(`PPS ${p.pps}% ซึม/หายใจช้าน่าจะจากโรคระยะท้าย → ไม่เพิ่ม คงโดสเดิม ${fmt(newOME)} mg (ลดได้ถ้าสงบดีและ RR ช้ามาก)`);
   } else if(unsafe){
-    newOME=T.sch*0.75; steps.push(`ง่วงมาก/หายใจช้า → ไม่เพิ่ม พิจารณาลด 25% = ${fmt(newOME)} mg`);
+    newOME=T.sch*0.75; steps.push(`${p.myo&&p.sed<3&&!(p.rr>0&&p.rr<10)?'มีกระตุก/เพ้อจาก opioid':'ง่วงมาก/หายใจช้า'} → ไม่เพิ่ม ลด 25% = ${fmt(newOME)} mg (ดูการ์ดประเมินความง่วงหน้ายาเดิม)`);
   } else {
     const base=T.sch+T.prn; steps.push(`โดสประจำ + PRN ที่ใช้ = ${fmt(base)} mg OME`);
     let f=1, why='คุมปวดได้ คงโดสรวมเดิม';
@@ -669,19 +795,19 @@ function update(){
   const p=pt(),T=totals();
   const sedTxt=$('#sed').selectedOptions[0].textContent.split('·')[1].trim();
   const v=x=>$(x).value===''?'-':$(x).value;
-  $('#ptSum').textContent=`อายุ ${v('#age')} · eGFR ${v('#egfr')} · RR ${v('#rr')} · ${sedTxt}${p.liver?' · ตับบกพร่อง':''} · ยา ${S.rows.length} รายการ`;
+  $('#ptSum').textContent=`อายุ ${v('#age')} · eGFR ${v('#egfr')} · RR ${v('#rr')} · ${sedTxt}${p.pps!=null?' · PPS '+p.pps+'%':''}${p.liver?' · ตับบกพร่อง':''} · ยา ${S.rows.length} รายการ`;
   fillRowOrders();
-  renderMedsSummary(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
+  renderMedsSummary(T,p); renderSafety(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
 }
 $('#addRow').addEventListener('click',()=>{S.rows.push({drug:'mosyr',qty:2.5,cnt:1,prn:true});renderRows();update();});
-['#age','#egfr','#rr','#sed','#liver','#pain','#sdVol','#sdDil','#sdDev','#sdDur','#sdLen'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
+['#age','#egfr','#rr','#sed','#pps','#pin','#cyan','#trig','#myo','#liver','#pain','#sdVol','#sdDil','#sdDev','#sdDur','#sdLen'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
 renderRows(); update();
 // clear patient (tap twice to confirm)
 let clrT=null;
 $('#clearBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const b=e.currentTarget;
   if(!clrT){b.textContent='กดอีกครั้งเพื่อล้าง';clrT=setTimeout(()=>{b.textContent='ล้างข้อมูล';clrT=null;},3000);return;}
   clearTimeout(clrT);clrT=null;b.textContent='ล้างแล้ว';setTimeout(()=>b.textContent='ล้างข้อมูล',1500);
-  ['#age','#egfr','#rr'].forEach(x=>$(x).value='');$('#sed').value='1';$('#liver').checked=false;$('#pain').value=0;
+  ['#age','#egfr','#rr'].forEach(x=>$(x).value='');$('#sed').value='1';$('#pps').value='';['#pin','#cyan','#trig','#myo','#liver'].forEach(x=>$(x).checked=false);$('#pain').value=0;
   S.rows=[];S.sdOpDose=null;S.target='mst';S.red='auto';S.sdOp='morphine';
   ADD.forEach(a=>S.addons[a.k]={on:a.k==='mida'||a.k==='halo',dose:a.def,conc:a.conc});
   const ab=$('#addons');ab.innerHTML='';delete ab.dataset.built;
