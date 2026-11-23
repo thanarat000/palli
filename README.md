@@ -2,7 +2,7 @@
 
 เว็บแอพช่วยคำนวณยา opioid และ syringe driver สำหรับทีมดูแลผู้ป่วยแบบประคับประคอง (palliative care) โรงพยาบาลนครไทย ใช้ได้บน iPhone, Android และ iPad
 
-> **ต้นแบบ (v0.9) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
+> **ต้นแบบ (v0.10) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
 > เป็นเครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์เท่านั้น ผู้สั่งยาต้องพิจารณาและตรวจสอบซ้ำทุกครั้ง
 
 ## ความสามารถ
@@ -10,7 +10,7 @@
 | แท็บ | ทำอะไร |
 | --- | --- |
 | ยาเดิม | กรอกแบบ order: ยากินกี่ tab/cap/ml q กี่ชม., ยาฉีดเป็นครั้ง (q กี่ชม.), หยดต่อเนื่อง mg/ชม. หรือ SC syringe driver ต่อ 24 ชม., patch กี่แผ่น, PRN ใช้ไปกี่ครั้งใน 24 ชม. แต่ละรายการแสดงบรรทัด order + mg/วัน + OME แล้วรวมเป็น oral morphine equivalent (OME) |
-| แปลงยา | เปลี่ยนเป็น MST, Kapanol, Mo syr q4h, morphine/fentanyl SC 24 ชม., fentanyl patch, tramadol หรือ oxycodone (นอกบัญชี) พร้อมลด cross-tolerance อัตโนมัติ และเลือกวิธีเปลี่ยนได้ 2 แบบ: stop & switch หรือค่อยๆ เปลี่ยน 3 ขั้น (cross-taper ขั้นละ 1/3, 1–3 วัน) |
+| แปลงยา | เปลี่ยนเป็น MST, Kapanol, Mo syr q4h, morphine/fentanyl SC 24 ชม., fentanyl patch, tramadol, oxycodone (นอกบัญชี) หรือ methadone (สำหรับผู้เชี่ยวชาญ) พร้อมลด cross-tolerance อัตโนมัติ และเลือกวิธีเปลี่ยนได้ 2 แบบ: stop & switch หรือค่อยๆ เปลี่ยน 3 ขั้น (cross-taper ขั้นละ 1/3, 1–3 วัน) |
 | ปรับโดส | เริ่มยาใหม่ (opioid-naïve) หรือ titrate ตาม pain score และ PRN ที่ใช้ |
 | Syringe | ผสม opioid กับ midazolam, haloperidol, hyoscine butylbromide, metoclopramide ออกเป็น order พร้อมวิธีผสม (ml แต่ละตัว + สารเจือจาง) และอัตราตามเครื่อง: syringe pump (ml/h), driver mm/24 ชม. (เช่น Graseby MS26), driver mm/ชม. (เช่น Graseby MS16A) ตั้งระยะเวลา 12/24/48/72 ชม. ได้ |
 | ข้อมูล | ตั้งอัตราส่วน morphine กิน:ฉีด (3:1 หรือ 2:1), ค่าแปลง และแหล่งอ้างอิง |
@@ -54,7 +54,8 @@ PRN ทางปากตั้งได้ q1h (NCCN/NICE) หรือ q2h ใ
 | Codeine PO | mg ÷ 10 | BNF (CDC 0.15) |
 | Tapentadol PO | × 0.4 | CDC/BNF |
 | Buprenorphine patch (mcg/h) | × 2.4 | BNF |
-| Methadone | ไม่แปลง | ให้ผู้เชี่ยวชาญปรับ |
+| Methadone (เป็นยาต้นทาง) | ไม่แปลง | ให้ผู้เชี่ยวชาญปรับ |
+| OME → methadone | < 90 = 4:1, 90–299 = 8:1, 300–799 = 12:1, 800–1199 = 15:1, ≥ 1200 = 20:1 · ไม่ลด cross-tolerance ซ้ำ · ลดอีก 25% ถ้าเปราะบาง · เริ่มไม่เกิน 30 mg/วัน q8h · ห้ามเพิ่มก่อน 5–7 วัน · ECG/QTc | Ripamonti 1998, Ayonrinde 2000, APS/CPDD 2014, Mercadante 3-day switch |
 | OME → patch | 60–134 = 25, 135–224 = 50, 225–314 = 75, 315–404 = 100 mcg/h | ฉลากยา fentanyl transdermal |
 
 ลด cross-tolerance 25% (50% ในผู้สูงอายุ ≥ 75 ปี, eGFR < 30, ง่วงมาก หรือตับบกพร่อง) เมื่อเปลี่ยนชนิด opioid; ไม่ลดเมื่อเปลี่ยน route ของ morphine, จาก tramadol หรือไป patch
@@ -76,6 +77,7 @@ PRN ทางปากตั้งได้ q1h (NCCN/NICE) หรือ q2h ใ
 npm i playwright
 node tests/conversion-cases.js index.html
 node tests/switch-cases.js index.html   # tramadol/oxycodone และ cross-taper
+node tests/methadone-cases.js index.html
 ```
 
 ## แหล่งอ้างอิง

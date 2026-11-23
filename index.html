@@ -204,27 +204,27 @@ details[open] .chev{transform:rotate(180deg)}
       <label class="f">อายุ (ปี)<input id="age" type="number" inputmode="numeric" min="18" max="120" value="68"></label>
       <label class="f">eGFR (mL/min)<input id="egfr" type="number" inputmode="numeric" min="0" max="150" value="55"></label>
       <label class="f">RR (/min)<input id="rr" type="number" inputmode="numeric" min="0" max="60" value="16"></label>
-      <label class="f full">Sedation (POSS)
+      <label class="f full">ระดับความง่วง (POSS)
         <select id="sed">
-          <option value="0">S · Sleep, easy to arouse</option>
-          <option value="1" selected>1 · Awake and alert</option>
-          <option value="2">2 · Slightly drowsy, easily aroused</option>
-          <option value="3">3 · Frequently drowsy, drifts off during conversation</option>
-          <option value="4">4 · Somnolent, minimal/no response</option>
+          <option value="0">S · หลับตามปกติ ปลุกตื่นง่าย</option>
+          <option value="1" selected>1 · ตื่นดี รู้ตัวดี</option>
+          <option value="2">2 · ง่วงเล็กน้อย ปลุกตื่นง่าย</option>
+          <option value="3">3 · ง่วงบ่อย ปลุกตื่นได้แต่หลับไปขณะพูดคุย</option>
+          <option value="4">4 · ง่วงซึมมาก ตอบสนองน้อยหรือไม่ตอบสนองต่อเสียงเรียกและการกระตุ้น</option>
         </select></label>
       <label class="f full">PPS (Palliative Performance Scale v2)
         <select id="pps">
           <option value="">ไม่ระบุ</option>
-          <option value="100">100% · Full ambulation, normal activity, no disease evidence</option>
-          <option value="90">90% · Normal activity, some evidence of disease</option>
-          <option value="80">80% · Normal activity with effort</option>
-          <option value="70">70% · Reduced ambulation, unable to work, full self-care</option>
-          <option value="60">60% · Unable to do hobby/housework, occasional assistance</option>
-          <option value="50" selected>50% · Mainly sit/lie, considerable assistance</option>
-          <option value="40">40% · Mainly in bed, mainly assistance</option>
-          <option value="30">30% · Totally bedbound, total care, intake normal or reduced</option>
-          <option value="20">20% · Bedbound, minimal sips, drowsy ± confusion</option>
-          <option value="10">10% · Bedbound, mouth care only, drowsy or coma</option>
+          <option value="100">100% · เดินได้ปกติ ทำกิจกรรมได้ปกติ ไม่มีอาการของโรค</option>
+          <option value="90">90% · เดินได้ปกติ ทำกิจกรรมได้ปกติ มีอาการของโรคบ้าง</option>
+          <option value="80">80% · เดินได้ปกติ ทำกิจกรรมปกติได้แต่ต้องออกแรง</option>
+          <option value="70">70% · เดินได้น้อยลง ทำงานไม่ได้ ดูแลตัวเองได้</option>
+          <option value="60">60% · เดินได้น้อยลง ทำงานบ้าน/งานอดิเรกไม่ได้ ต้องช่วยบางครั้ง</option>
+          <option value="50" selected>50% · นั่ง/นอนเป็นส่วนใหญ่ ทำงานใดๆ ไม่ได้ ต้องช่วยมาก</option>
+          <option value="40">40% · อยู่บนเตียงเป็นส่วนใหญ่ ต้องช่วยเกือบทั้งหมด</option>
+          <option value="30">30% · ติดเตียง ต้องดูแลทั้งหมด กินได้ปกติหรือลดลง</option>
+          <option value="20">20% · ติดเตียง จิบน้ำได้เล็กน้อย ตื่นหรือซึม ± สับสน</option>
+          <option value="10">10% · ติดเตียง ทำได้แค่ดูแลช่องปาก ซึมหรือโคม่า</option>
         </select></label>
     </div>
     <div class="chks" role="group" aria-label="Clinical signs">
@@ -335,7 +335,7 @@ details[open] .chev{transform:rotate(180deg)}
     <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
   </section>
 
-  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.9</p>
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.10</p>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
@@ -584,10 +584,10 @@ function renderMedsSummary(T,p){
 }
 
 // ---------- conversion engine ----------
-const TARGETS=[['mst','MST q12h'],['kap','Kapanol q12h'],['syr','Mo syr q4h'],['mocsci','Morphine SC 24 ชม.'],['fentcsci','Fentanyl SC 24 ชม.'],['patch','Fentanyl patch'],['tram','Tramadol'],['oxy','Oxycodone (นอกบัญชี)']];
-const TCLS={mst:'morphine',kap:'morphine',syr:'morphine',mocsci:'morphine',fentcsci:'fentanyl',patch:'fentanyl',tram:'tramadol',oxy:'oxycodone'};
+const TARGETS=[['mst','MST q12h'],['kap','Kapanol q12h'],['syr','Mo syr q4h'],['mocsci','Morphine SC 24 ชม.'],['fentcsci','Fentanyl SC 24 ชม.'],['patch','Fentanyl patch'],['tram','Tramadol'],['oxy','Oxycodone (นอกบัญชี)'],['meth','Methadone (ผู้เชี่ยวชาญ)']];
+const TCLS={mst:'morphine',kap:'morphine',syr:'morphine',mocsci:'morphine',fentcsci:'fentanyl',patch:'fentanyl',tram:'tramadol',oxy:'oxycodone',meth:'methadone'};
 function autoRed(T,target,p){
-  if(target==='patch')return 0;
+  if(target==='patch'||target==='meth')return 0; // patch table and methadone ratios already include the reduction
   const tc=TCLS[target];
   const others=[...T.classes].filter(c=>c!==tc&&c!=='tramadol'&&c!=='codeine');
   if(others.length===0)return 0; // same drug (route change) or tramadol step-up
@@ -679,6 +679,29 @@ function convert(ome,target,red,p){
     if(p.egfr!=null&&p.egfr<30) out.alerts.push(['warn','eGFR < 30: oxycodone และ metabolite สะสมได้ ลดโดส ยืดช่วงเวลา หรือใช้ fentanyl']);
     if(p.liver) out.alerts.push(['warn','ตับบกพร่องรุนแรง: ลดโดสเริ่มต้นเหลือ 1/3–1/2 และเฝ้าระวัง sedation']);
   }
+  if(target==='meth'){
+    // Dose-dependent ratio (Ripamonti 1998; Ayonrinde & Bridge 2000 for > 300 mg). These ratios already
+    // allow for incomplete cross-tolerance, so no extra 25–50% reduction. Starting dose capped at 30 mg/day
+    // (APS/CPDD methadone safety guideline 2014). Frail/elderly: a further 25% lower.
+    const bands=[[90,4],[300,8],[800,12],[1200,15],[Infinity,20]];
+    const ratio=bands.find(([u])=>ome<u)[1];
+    let daily=ome/ratio; out.steps.push(`OME ${fmt(ome)} mg → ใช้อัตราส่วน morphine:methadone = ${ratio}:1 → methadone ${fmt(daily)} mg/วัน (อัตราส่วนนี้รวมการลด cross-tolerance แล้ว)`);
+    if(frail(p)){daily*=0.75;out.steps.push(`ผู้ป่วยเปราะบาง/สูงอายุ/ไตหรือตับบกพร่อง: ลดอีก 25% → ${fmt(daily)} mg/วัน`);}
+    if(daily>30){out.steps.push(`เกินขนาดเริ่มต้นสูงสุด 30 mg/วัน → ใช้ 30 mg/วัน แล้วปรับเพิ่มช้าๆ`);out.alerts.push(['warn','ขนาดคำนวณเกิน 30 mg/วัน: เริ่มที่ 30 mg/วัน (ส่วนที่ขาดใช้ PRN และปรับขึ้นทีละ 5–7 วัน) หรือใช้วิธีค่อยๆ เปลี่ยน 3 วัน']);daily=30;}
+    let each=roundStep(daily/3,2.5),int=8;
+    if(each<2.5){each=roundStep(daily/2,2.5);int=12;}
+    if(each<2.5){out.alerts.push(['info','OME ต่ำมาก ไม่จำเป็นต้องเปลี่ยนเป็น methadone']);return out;}
+    const md=each*24/int; out.steps.push(`÷ ${24/int} มื้อ → ${fmt(each)} mg q${int}h (ทีละ 2.5 mg = ครึ่งเม็ด 5 mg)`);
+    out.achieved=0;
+    out.lines.push([`Methadone 5 mg ${fmt(each/5,1)} tab (${fmt(each)} mg) PO q${int}h`,`= ${fmt(md)} mg/วัน · ห้ามเพิ่มโดสเร็วกว่าทุก 5–7 วัน`]);
+    const pr=Math.max(2.5,roundStep(md*0.1,2.5));
+    out.lines.push([`Methadone ${fmt(pr)} mg PO q3h PRN`,'≈ 10% ของโดสต่อวัน · หรือคง Mo syr PRN ตามที่ผู้เชี่ยวชาญกำหนด']);
+    out.alerts.push(['stop','Methadone ให้แพทย์ที่มีประสบการณ์ (palliative/pain) สั่งและติดตามเท่านั้น: ครึ่งชีวิตยาวและไม่แน่นอน (15–60 ชม.) ยาสะสมจนถึง steady state ใน 5–7 วัน เสี่ยงกดการหายใจช่วงวันที่ 2–5']);
+    out.alerts.push(['warn','ตรวจ ECG ก่อนเริ่มและเมื่อปรับโดส: QTc > 500 ms ไม่ควรใช้ · 450–500 ms ใช้ด้วยความระวัง แก้ K⁺/Mg²⁺ และหยุดยาที่ยืด QT อื่น']);
+    out.alerts.push(['warn','ยาที่เพิ่มระดับ methadone (CYP3A4 inhibitor): fluconazole, clarithromycin/erythromycin, ciprofloxacin, SSRI บางตัว · ยาที่ลดระดับ: rifampicin, phenytoin, carbamazepine, phenobarbital']);
+    out.alerts.push(['info','ข้อดี: ใช้ได้ในไตวาย (ขับทางอุจจาระเป็นหลัก) และช่วย neuropathic pain · แนะนำใช้ "ค่อยๆ เปลี่ยน 3 วัน" และประเมิน POSS/RR ทุกวันอย่างน้อย 5–7 วัน']);
+    return out;
+  }
   if(out.achieved){const diff=(out.achieved-eff)/eff*100; out.steps.push(`ได้จริง ≈ ${fmt(out.achieved)} mg OME/วัน (${diff>=0?'+':''}${fmt(diff,0)}% จากค่าคำนวณ)`); if(Math.abs(diff)>20&&target!=='patch')out.alerts.push(['warn','โดสที่ปัดได้ต่างจากค่าคำนวณมากกว่า 20% พิจารณารูปแบบยาอื่น']);}
   return out;
 }
@@ -710,7 +733,7 @@ function renderConv(T,p){
   const rs=$('#cvRed'); rs.innerHTML='';
   [['auto',`อัตโนมัติ (${auto}%)`],['0','0%'],['25','25%'],['50','50%']].forEach(([k,l])=>rs.append(el('button',{'aria-pressed':String(S.red===k),onclick:()=>{S.red=k;update();}},l)));
   const red=S.red==='auto'?auto:+S.red;
-  const res=convert(T.total,S.target,S.target==='patch'?0:red,p);
+  const res=convert(T.total,S.target,(S.target==='patch'||S.target==='meth')?0:red,p);
   const extra=patientAlerts(p,TCLS[S.target]);
   if(T.hasMeth) extra.unshift(['stop','ผู้ป่วยได้ methadone อยู่: ผลนี้ไม่ได้รวม methadone ห้ามใช้แปลงยา ปรึกษาผู้เชี่ยวชาญ']);
   if(T.hasPatch&&S.target==='fentcsci') extra.push(['warn','จาก fentanyl patch ไป fentanyl SC: ช่วงท้ายของชีวิตแนะนำคงแผ่นเดิมไว้ และใช้ syringe driver เฉพาะส่วนที่ต้องเพิ่ม (ตาราง OME ของแผ่นกับยาฉีดไม่เท่ากัน อาจได้โดสต่ำไป)']);
@@ -720,11 +743,15 @@ function renderConv(T,p){
   const ms=$('#cvMode'); ms.innerHTML='';
   [['direct','เปลี่ยนทันที (stop & switch)'],['taper','ค่อยๆ เปลี่ยน 3 ขั้น']].forEach(([k,l])=>ms.append(el('button',{'aria-pressed':String(S.mode===k),onclick:()=>{S.mode=k;update();}},l)));
   res.taper=taperPlan(T,S.target,red,p,res);
+  if(S.target==='meth'&&S.mode==='direct'&&T.total>0) extra.push(['warn','Methadone: แนะนำ "ค่อยๆ เปลี่ยน 3 วัน" มากกว่าเปลี่ยนทันที เพื่อลดความเสี่ยงยาสะสม']);
   if(T.total>=200&&S.mode==='direct'&&!T.hasPatch&&S.target!=='patch'&&auto>0) extra.push(['info','OME ≥ 200 mg/วัน: พิจารณา "ค่อยๆ เปลี่ยน 3 ขั้น" เพื่อลดความเสี่ยงปวดกลับหรือ toxicity ระหว่างเปลี่ยน']);
   renderResult($('#cvOut'),'คำสั่งยาที่แนะนำ',res,extra);
 }
 // Switching strategy: stop & switch for most cases; a stepwise cross-taper (about 1/3 per step,
 // each step 1–3 days) for high doses, frail patients, or when a pain flare/withdrawal is a concern.
+// methadone steps are fractions of the full calculated dose (ratio depends on the whole OME, not the partial one)
+function convertMethPart(ome,k,p){const full=convert(ome,'meth',0,p);const m=full.lines[0]&&full.lines[0][0].match(/\((\d+(?:\.\d+)?) mg\) PO q(\d+)h/);
+  if(!m)return full;const each=roundStep(+m[1]*k,2.5);return {lines:each>=2.5?[[`Methadone 5 mg ${fmt(each/5,1)} tab (${fmt(each)} mg) PO q${m[2]}h`,'']]:[]};}
 function taperPlan(T,target,red,p,res){
   if(T.total<=0||!res.lines.length) return null;
   const tc=TCLS[target], sameDrug=[...T.classes].every(c=>c===tc);
@@ -733,13 +760,18 @@ function taperPlan(T,target,red,p,res){
     if(sameDrug) st.push(['เปลี่ยนรูปแบบยาเดิม','ให้รูปแบบใหม่เวลามื้อถัดไปของยาเดิม ไม่ต้องลดโดส']);
     else if(target==='patch') st.push(['ติดแผ่น','ดูคำแนะนำช่วงรอยต่อใน order ด้านบน']);
     else if(T.hasPatch) st.push(['ลอกแผ่น','เริ่มยาใหม่ประมาณ 12 ชม. หลังลอกแผ่น ใช้ PRN ช่วงรอยต่อ']);
-    else st.push(['หยุดยาเดิม','งดยาเดิมทั้งหมด (ยกเว้น PRN ของยาใหม่)'],['เริ่มยาใหม่','ให้ยาใหม่เต็มโดสเวลามื้อถัดไปของยาเดิม'],['ติดตาม','ประเมิน pain score, POSS และ RR ทุกวันใน 2–3 วันแรก ใช้ PRN ของยาใหม่ถ้าปวด']);
+    else st.push(['หยุดยาเดิม','งดยาเดิมทั้งหมด (ยกเว้น PRN ของยาใหม่)'],['เริ่มยาใหม่','ให้ยาใหม่เต็มโดสเวลามื้อถัดไปของยาเดิม'],['ติดตาม',target==='meth'?'ประเมิน POSS, RR และ pain ทุกวันอย่างน้อย 5–7 วัน (ยาสะสมช้า เสี่ยงง่วง/กดการหายใจช่วงวันที่ 2–5) · ห้ามเพิ่มโดสก่อนวันที่ 5–7':'ประเมิน pain score, POSS และ RR ทุกวันใน 2–3 วันแรก ใช้ PRN ของยาใหม่ถ้าปวด']);
     return {title:'ขั้นตอนเปลี่ยนยา (stop & switch)',steps:st};
   }
   if(target==='patch'||T.hasPatch) return {title:'ค่อยๆ เปลี่ยน',steps:[['ไม่ใช้กับ fentanyl patch','patch ออกฤทธิ์และหมดฤทธิ์ช้าอยู่แล้ว ให้ใช้ขั้นตอนเปลี่ยนตาม order ด้านบน']]};
   if(sameDrug) return {title:'ค่อยๆ เปลี่ยน',steps:[['ไม่จำเป็น','เป็นยาตัวเดิมเปลี่ยนแค่รูปแบบ ให้เปลี่ยนทันทีได้']]};
-  const first=k=>{const r=convert(T.total*k,target,red,p);const l=r.lines.length?r.lines[0][0]:'';return !l?'โดสต่ำกว่าเม็ดเล็กสุด ใช้ PRN ของยาใหม่แทน':/PRN/.test(l)?`โดสต่ำกว่าเม็ดเล็กสุด ให้ ${l} แทน`:l;};
+  const first=k=>{const r=target==='meth'?convertMethPart(T.total,k,p):convert(T.total*k,target,red,p);const l=r.lines.length?r.lines[0][0]:'';return !l?'โดสต่ำกว่าเม็ดเล็กสุด ใช้ PRN ของยาใหม่แทน':/PRN/.test(l)?`โดสต่ำกว่าเม็ดเล็กสุด ให้ ${l} แทน`:l;};
   const old=k=>`ยาเดิมทุกรายการลดเหลือ ${k} ของโดสประจำ (≈ OME ${fmt(T.sch*(k==='2/3'?2/3:1/3))} mg/วัน)`;
+  if(target==='meth') return {title:'ค่อยๆ เปลี่ยน 3 วัน (3-day switch, Mercadante)',steps:[
+    ['วันที่ 1',`${old('2/3')} + methadone 1/3: ${first(1/3)}`],
+    ['วันที่ 2',`${old('1/3')} + methadone 2/3: ${first(2/3)}`],
+    ['วันที่ 3',`หยุดยาเดิม ให้ methadone เต็มโดสตาม order ด้านบน`],
+    ['ติดตาม','ประเมิน POSS, RR และ pain ทุกวันอย่างน้อย 5–7 วัน (ยาสะสมช้า) · ห้ามเพิ่มโดสก่อนวันที่ 5–7 · ปวดระหว่างนี้ใช้ PRN']]};
   return {title:'ค่อยๆ เปลี่ยน 3 ขั้น (cross-taper)',steps:[
     ['ขั้นที่ 1 · วันที่ 1–3',`${old('2/3')} + ยาใหม่ 1/3: ${first(1/3)}`],
     ['ขั้นที่ 2 · วันที่ 4–6',`${old('1/3')} + ยาใหม่ 2/3: ${first(2/3)}`],
