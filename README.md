@@ -2,7 +2,7 @@
 
 เว็บแอพช่วยคำนวณยา opioid และ syringe driver สำหรับทีมดูแลผู้ป่วยแบบประคับประคอง (palliative care) โรงพยาบาลนครไทย ใช้ได้บน iPhone, Android และ iPad
 
-> **ต้นแบบ (v0.6) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
+> **ต้นแบบ (v0.7) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
 > เป็นเครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์เท่านั้น ผู้สั่งยาต้องพิจารณาและตรวจสอบซ้ำทุกครั้ง
 
 ## ความสามารถ
@@ -15,13 +15,15 @@
 | Syringe | ผสม opioid กับ midazolam, haloperidol, hyoscine butylbromide, metoclopramide ออกเป็น order พร้อมวิธีผสม (ml แต่ละตัว + สารเจือจาง) และอัตราตามเครื่อง: syringe pump (ml/h), driver mm/24 ชม. (เช่น Graseby MS26), driver mm/ชม. (เช่น Graseby MS16A) ตั้งระยะเวลา 12/24/48/72 ชม. ได้ |
 | ข้อมูล | ตั้งอัตราส่วน morphine กิน:ฉีด (3:1 หรือ 2:1), ค่าแปลง และแหล่งอ้างอิง |
 
-**ประเมินความง่วงและการหายใจ** (หน้ายาเดิม): ใช้ RR, ความง่วงแบบ POSS, PPS และอาการร่วม (รูม่านตาเล็ก, เขียว/SpO₂ < 90%, เพิ่งเพิ่มยาหรือไตแย่ลง, กระตุก/เพ้อ) แล้วแยกเป็น
-- ปลอดภัย ปรับยาได้
-- ง่วงเกิน (POSS 3 หรือ RR < 10): งด/ลดยา 25–50% ยังไม่ให้ naloxone
-- อันตราย (POSS 4 หรือ RR < 8): หยุดยา เฝ้าทุก 15 นาที
-- ให้ naloxone: RR < 8 ร่วมกับปลุกไม่ตื่นหรือเขียว ขนาด 20 mcg IV ทุก 2 นาที (PCF / Scottish Palliative Care Guidelines)
-- PPS ≤ 30 ที่ซึม/หายใจช้าโดยไม่มีเหตุจากยา: น่าจะเป็นระยะท้ายของโรค ไม่ให้ naloxone และไม่หยุด opioid ทันที
-- กระตุก/เพ้อ: opioid neurotoxicity ลดหรือเปลี่ยนยา
+**Sedation & respiration** (หน้ายาเดิม): ใช้ RR, POSS (Pasero Opioid-induced Sedation Scale), PPS v2 และ clinical signs (pinpoint pupils, cyanosis/SpO₂ < 90%, recent opioid ↑/AKI, myoclonus/delirium)
+- No signs of toxicity: titration ได้
+- Unacceptable sedation (POSS 3 หรือ RR < 10): omit dose, ลด 25–50%, ยังไม่ให้ naloxone
+- Severe sedation (POSS 4 หรือ RR < 8): hold opioid, monitor q15min
+- Opioid-induced respiratory depression (RR < 8 ร่วมกับ POSS 4 หรือ cyanosis): naloxone 20 mcg IV q2min (PCF / Scottish Palliative Care Guidelines)
+- PPS ≤ 30 ที่ซึม/หายใจช้า โดยไม่มี pinpoint pupils หรือ recent opioid ↑: likely terminal phase ไม่ให้ naloxone และไม่หยุด opioid ทันที
+- Opioid-induced neurotoxicity: ลดโดสหรือ opioid rotation
+
+แถบข้อมูลผู้ป่วยบรรทัดเดียวลอยอยู่ด้านบนเมื่อเลื่อนลง แตะเพื่อเปิดข้อมูลผู้ป่วย ปัดซ้าย/ขวา (หรือกดปุ่ม –) เพื่อย่อเป็นไอคอนลอย ลากไอคอนไปข้างใดก็ได้ และแตะเพื่อเปิดแถบกลับมา จุดสีบอกระดับความปลอดภัย
 
 ลบยาแต่ละรายการได้ และมีปุ่ม "ล้างข้อมูล" (กด 2 ครั้ง) ล้างข้อมูลผู้ป่วยทั้งหมด
 

@@ -150,12 +150,26 @@ details[open] .chev{transform:rotate(180deg)}
 .themebtn{background:var(--sage-soft);color:var(--ink);display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;border-radius:999px;flex:none}
 .themebtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .themebtn svg{width:18px;height:18px}
+.ptmini{position:fixed;top:calc(env(safe-area-inset-top) + 6px);left:50%;transform:translateX(-50%);z-index:40;width:min(calc(100% - 24px),736px);height:30px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:0 4px 14px rgba(0,0,0,.14);font-size:.78rem;line-height:1;color:var(--ink);touch-action:pan-y;transition:transform .22s ease,opacity .22s ease;cursor:pointer;-webkit-user-select:none;user-select:none}
+.ptmini.dragging{transition:none}
+.ptmini .txt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.ptmini .mini-x{width:26px;height:26px;min-height:0;padding:0;border:0;border-radius:999px;background:transparent;color:var(--muted);display:grid;place-items:center;flex:none}
+.ptmini .mini-x svg{width:14px;height:14px}
+.sdot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--ok)}
+.sdot.warn{background:var(--warn)}.sdot.stop{background:var(--stop)}.sdot.eol{background:#8b7bd8}
+.ptbubble{position:fixed;z-index:40;width:48px;height:48px;min-height:0;padding:0;border:0;border-radius:16px;background:color-mix(in srgb,var(--ink) 58%,transparent);color:var(--bg);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.25);display:grid;place-items:center;touch-action:none;transition:left .25s ease,top .25s ease,transform .2s ease}
+.ptbubble.dragging{transition:none;transform:scale(1.08)}
+.ptbubble svg{width:24px;height:24px}
+.ptbubble .sdot{position:absolute;top:7px;right:7px;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 58%,transparent)}
+.ptmini[hidden],.ptbubble[hidden]{display:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.star,.bat,.bat svg{animation:none!important}.bat{transform:translate(60vw,14vh)}}
 @media (min-width:700px){.ome .big{font-size:2.8rem}}
 </style>
 </head>
 <body>
 <div class="sky" aria-hidden="true"><div class="moon"></div><div id="stars"></div><div class="bat"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div><div class="bat b2"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div><div class="bat b3"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div></div>
+<div id="ptMini" class="ptmini" hidden role="button" tabindex="0" aria-label="ข้อมูลผู้ป่วย: แตะเพื่อเปิด ปัดซ้าย/ขวาเพื่อย่อเป็นไอคอน"><span class="sdot"></span><span class="txt"></span><button type="button" class="mini-x" aria-label="ย่อเป็นไอคอน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></svg></button></div>
+<button id="ptBubble" class="ptbubble" type="button" hidden aria-label="แสดงแถบข้อมูลผู้ป่วย"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="sdot"></span></button>
 <div class="wrap">
   <header class="top">
     <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/><path d="M9 12h6M12 9v6"/></svg></div>
@@ -168,36 +182,36 @@ details[open] .chev{transform:rotate(180deg)}
     <div class="grid" style="margin-top:12px">
       <label class="f">อายุ (ปี)<input id="age" type="number" inputmode="numeric" min="18" max="120" value="68"></label>
       <label class="f">eGFR (mL/min)<input id="egfr" type="number" inputmode="numeric" min="0" max="150" value="55"></label>
-      <label class="f">อัตราหายใจ (/min)<input id="rr" type="number" inputmode="numeric" min="0" max="60" value="16"></label>
-      <label class="f full">ความง่วง (POSS: Pasero Opioid-induced Sedation Scale)
+      <label class="f">RR (/min)<input id="rr" type="number" inputmode="numeric" min="0" max="60" value="16"></label>
+      <label class="f full">Sedation (POSS)
         <select id="sed">
-          <option value="0">S · หลับปกติ ปลุกตื่นง่าย</option>
-          <option value="1" selected>1 · ตื่นดี</option>
-          <option value="2">2 · ง่วงเล็กน้อย ปลุกตื่นง่าย</option>
-          <option value="3">3 · ง่วงบ่อย หลับขณะคุย</option>
-          <option value="4">4 · ปลุกไม่ตื่น ตอบสนองน้อยมาก</option>
+          <option value="0">S · Sleep, easy to arouse</option>
+          <option value="1" selected>1 · Awake and alert</option>
+          <option value="2">2 · Slightly drowsy, easily aroused</option>
+          <option value="3">3 · Frequently drowsy, drifts off during conversation</option>
+          <option value="4">4 · Somnolent, minimal/no response</option>
         </select></label>
-      <label class="f full">PPS (Palliative Performance Scale)
+      <label class="f full">PPS (Palliative Performance Scale v2)
         <select id="pps">
           <option value="">ไม่ระบุ</option>
-          <option value="100">100% · ปกติ ไม่มีอาการ</option>
-          <option value="90">90% · ปกติ มีอาการเล็กน้อย</option>
-          <option value="80">80% · ทำกิจวัตรได้ ต้องออกแรง</option>
-          <option value="70">70% · ทำงานไม่ได้ ดูแลตัวเองได้</option>
-          <option value="60">60% · ช่วยตัวเองได้บ้าง ต้องช่วยบางครั้ง</option>
-          <option value="50" selected>50% · นั่ง/นอนเป็นส่วนใหญ่</option>
-          <option value="40">40% · อยู่บนเตียงเป็นส่วนใหญ่</option>
-          <option value="30">30% · ติดเตียง กินได้น้อย</option>
-          <option value="20">20% · ติดเตียง จิบน้ำได้ ซึม/หลับมาก</option>
-          <option value="10">10% · ติดเตียง ดูแลช่องปากอย่างเดียว ซึม/โคม่า</option>
+          <option value="100">100% · Full ambulation, normal activity, no disease evidence</option>
+          <option value="90">90% · Normal activity, some evidence of disease</option>
+          <option value="80">80% · Normal activity with effort</option>
+          <option value="70">70% · Reduced ambulation, unable to work, full self-care</option>
+          <option value="60">60% · Unable to do hobby/housework, occasional assistance</option>
+          <option value="50" selected>50% · Mainly sit/lie, considerable assistance</option>
+          <option value="40">40% · Mainly in bed, mainly assistance</option>
+          <option value="30">30% · Totally bedbound, total care, intake normal or reduced</option>
+          <option value="20">20% · Bedbound, minimal sips, drowsy ± confusion</option>
+          <option value="10">10% · Bedbound, mouth care only, drowsy or coma</option>
         </select></label>
     </div>
-    <div class="chks" role="group" aria-label="อาการร่วม">
-      <label class="chk"><input id="pin" type="checkbox"> รูม่านตาเล็กเท่าหัวเข็ม</label>
-      <label class="chk"><input id="cyan" type="checkbox"> เขียว หรือ SpO₂ &lt; 90%</label>
-      <label class="chk"><input id="trig" type="checkbox"> เพิ่งเพิ่ม/เริ่ม opioid หรือไตแย่ลง (24–72 ชม.)</label>
-      <label class="chk"><input id="myo" type="checkbox"> กระตุก (myoclonus) เพ้อ เห็นภาพหลอน</label>
-      <label class="chk"><input id="liver" type="checkbox"> ตับบกพร่องรุนแรง / cirrhosis</label>
+    <div class="chks" role="group" aria-label="Clinical signs">
+      <label class="chk"><input id="pin" type="checkbox"> Pinpoint pupils (miosis)</label>
+      <label class="chk"><input id="cyan" type="checkbox"> Cyanosis / SpO₂ &lt; 90%</label>
+      <label class="chk"><input id="trig" type="checkbox"> Recent opioid ↑ / new opioid / AKI (24–72 h)</label>
+      <label class="chk"><input id="myo" type="checkbox"> Myoclonus / delirium / hallucinations</label>
+      <label class="chk"><input id="liver" type="checkbox"> Severe hepatic impairment / cirrhosis</label>
     </div>
   </details>
 
@@ -215,7 +229,7 @@ details[open] .chev{transform:rotate(180deg)}
       <div class="alerts" id="medAlerts"></div>
     </div>
     <div class="card" id="safeCard">
-      <div><h2>ประเมินความง่วงและการหายใจ</h2><p class="note">ใช้ RR, POSS, PPS และอาการร่วมจากข้อมูลผู้ป่วยด้านบน</p></div>
+      <div><h2>Sedation &amp; respiration</h2><p class="note">ประเมินจาก RR, POSS, PPS และ clinical signs ในข้อมูลผู้ป่วย</p></div>
       <div id="safeOut" style="display:flex;flex-direction:column;gap:12px"></div>
     </div>
   </section>
@@ -299,7 +313,7 @@ details[open] .chev{transform:rotate(180deg)}
     <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
   </section>
 
-  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.6</p>
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.7</p>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
@@ -401,8 +415,8 @@ function roundStep(x,step){ if(x<=0)return 0; const lo=Math.floor(x/step+1e-9)*s
 function patientAlerts(p,ctx){
   const a=[];
   const sf=safety(p,{});
-  if(sf.lv==='stop'||sf.lv==='warn') a.push([sf.lv,sf.title+': ห้ามเพิ่มโดส ดูแนวทางที่การ์ด "ประเมินความง่วงและการหายใจ" หน้ายาเดิม']);
-  else if(sf.lv==='eol') a.push(['info','PPS ต่ำ ซึม/หายใจช้า น่าจะจากโรคระยะท้าย: ไม่เพิ่มโดสเพื่อให้หลับ ดูการ์ด "ประเมินความง่วงและการหายใจ"']);
+  if(sf.lv==='stop'||sf.lv==='warn') a.push([sf.lv,sf.title+' · ห้ามเพิ่มโดส ดูการ์ด "Sedation & respiration"']);
+  else if(sf.lv==='eol') a.push(['info',sf.title+' · ไม่เพิ่มโดส ดูการ์ด "Sedation & respiration"']);
   if(p.egfr!=null&&p.egfr<30&&ctx==='morphine') a.push(['stop','eGFR < 30: เลี่ยง morphine (metabolite สะสม) แนะนำ fentanyl แทน']);
   else if(p.egfr!=null&&p.egfr<60&&ctx==='morphine') a.push(['warn','eGFR 30–60: ใช้ morphine ได้ด้วยความระวัง ลดโดส/ยืดเวลา และเฝ้าระวังง่วง ซึม myoclonus']);
   if(p.liver&&ctx==='morphine') a.push(['warn','ตับบกพร่องรุนแรง: เริ่มโดสต่ำ ยืดช่วงเวลา เลี่ยง SR ในช่วงปรับยา']);
@@ -412,81 +426,84 @@ function patientAlerts(p,ctx){
 function renderAlerts(box,list){box.innerHTML='';list.forEach(([k,t])=>box.append(el('div',{class:'alert '+k},el('b',{},k==='stop'?'⛔':k==='warn'?'⚠':'ℹ'),el('span',{},t))));}
 
 // ---------- sedation / respiratory safety ----------
-// POSS (Pasero) + RR + PPS. Naloxone criteria and dosing: Palliative Care Formulary,
-// Scottish Palliative Care Guidelines "Reversal of opioid toxicity".
+// Sedation: Pasero Opioid-induced Sedation Scale (POSS). Function: PPS v2 (Victoria Hospice).
+// Naloxone criteria and titration: Palliative Care Formulary; Scottish Palliative Care Guidelines
+// "Reversal of opioid toxicity" (RR < 8 and barely rousable/unconscious and/or cyanosed).
 function safety(p,T){
   const rr=p.rr>0?p.rr:null, rr8=rr!=null&&rr<8, rr10=rr!=null&&rr<10;
   const low=p.pps!=null&&p.pps<=30, opioidCue=p.pin||p.trig;
   const longActing=T&&T.longActing, kidney=p.egfr!=null&&p.egfr<30;
   const r={lv:'ok',title:'',why:'',acts:[],nal:false,notes:[]};
   const concern=p.sed>=3||rr10||p.cyan;
+  const cues=[p.pin&&'pinpoint pupils',p.trig&&'recent opioid ↑/AKI'].filter(Boolean).join(', ');
   if(low&&concern&&!opioidCue){
-    r.lv='eol'; r.title='น่าจะเป็นการดำเนินโรคระยะท้าย มากกว่า opioid เกินขนาด';
-    r.why=`PPS ${p.pps}% ซึม/หายใจช้าเป็นไปตามระยะโรค และไม่มีรูม่านตาเล็กหรือการเพิ่มยาล่าสุด`;
-    r.acts=['ไม่ให้ naloxone: ไม่ช่วยให้ดีขึ้น และทำให้ปวดรุนแรง กระสับกระส่าย ทุกข์ทรมาน',
-      'ไม่หยุด opioid ทันที คงโดสเดิมถ้ายังมีสีหน้าปวด คราง หรือกระสับกระส่าย ถ้าสงบดีและ RR ช้ามาก พิจารณาลด 25–50%',
-      'กลืนไม่ได้: เปลี่ยนเป็น SC syringe driver (ใช้หน้า "แปลงยา")',
-      'ไม่ต้องปลุกเพื่อวัดคะแนนง่วง ประเมินความสุขสบายจากสีหน้า เสียง ท่าทาง',
-      'หายใจแบบ Cheyne-Stokes หรือหยุดหายใจเป็นช่วง พบได้ตามธรรมชาติ อธิบายครอบครัว',
-      'ทบทวนเป้าหมายการดูแล การไม่ใส่ท่อช่วยหายใจ และความต้องการของครอบครัว'];
-    if(kidney) r.notes.push(['warn','eGFR < 30: morphine สะสมได้ ถ้ามีกระตุกหรือเพ้อร่วม ให้ลดโดสหรือเปลี่ยนเป็น fentanyl']);
+    r.lv='eol'; r.title='Likely terminal phase, not opioid toxicity';
+    r.why=`PPS ${p.pps}% · ไม่มี pinpoint pupils หรือการเพิ่มยาล่าสุด`;
+    r.acts=['ไม่ให้ naloxone: ไม่เปลี่ยนการดำเนินโรค และเสี่ยง acute pain crisis/opioid withdrawal',
+      'ไม่หยุด opioid ทันที คงโดสเดิมถ้ามี grimacing, moaning หรือ restlessness · ถ้าสงบดีและ RR ช้ามาก พิจารณาลด 25–50%',
+      'กลืนไม่ได้: เปลี่ยนเป็น CSCI (syringe driver) ที่หน้า "แปลงยา"',
+      'ไม่ต้องปลุกเพื่อประเมิน POSS ประเมิน comfort จากสีหน้า เสียง และท่าทาง',
+      'Cheyne-Stokes breathing และ apnoea เป็นช่วงพบได้ในระยะท้าย อธิบายครอบครัว',
+      'ทบทวน goals of care และ DNR/advance care plan กับครอบครัว'];
+    if(kidney) r.notes.push(['warn','eGFR < 30: morphine-6/3-glucuronide สะสมได้ ถ้ามี myoclonus หรือ agitation ร่วม ให้ลดโดสหรือเปลี่ยนเป็น fentanyl']);
     return r;}
   if(low&&concern&&opioidCue){
-    r.lv='warn'; r.title='PPS ต่ำ แต่มีเหตุให้สงสัย opioid เกินขนาด';
-    r.why=`PPS ${p.pps}% ร่วมกับ${p.pin?'รูม่านตาเล็ก':''}${p.pin&&p.trig?' และ':''}${p.trig?'เพิ่งเพิ่มยา/ไตแย่ลง':''}`;
-    r.acts=['งดยามื้อถัดไป หรือลด syringe driver 25–50% แต่ไม่หยุดยาทั้งหมด',
-      'เฝ้า RR และความสุขสบายทุก 1 ชม. จน RR ≥ 10 หรือคงที่',
-      'Naloxone ให้เฉพาะเมื่อ RR < 8 ร่วมกับปลุกไม่ตื่นหรือเขียว และการแก้ไขยังตรงกับเป้าหมายการดูแล ให้ขนาดเล็กทีละน้อย (ดูด้านล่าง)',
-      'ถ้าผู้ป่วยใกล้เสียชีวิตและดูสงบ ไม่จำเป็นต้องให้ naloxone คุยกับครอบครัวก่อน'];
+    r.lv='warn'; r.title='Low PPS with features of opioid toxicity';
+    r.why=`PPS ${p.pps}% · ${cues}`;
+    r.acts=['Omit dose ถัดไป หรือลด CSCI 25–50% แต่ไม่หยุด opioid ทั้งหมด',
+      'Monitor RR และ comfort ทุก 1 ชม. จน RR ≥ 10 หรือคงที่',
+      'Naloxone เฉพาะเมื่อ RR < 8 ร่วมกับ POSS 4 หรือ cyanosis และการ reverse ยังสอดคล้องกับ goals of care · titrate ทีละน้อย',
+      'ถ้า actively dying และดูสงบ ไม่จำเป็นต้อง reverse ให้คุยกับครอบครัวก่อน'];
     r.nal=rr8&&(p.sed===4||p.cyan);
     return r;}
   if(p.sed===4&&(rr8||p.cyan)){
-    r.lv='stop'; r.title='สงสัย opioid กดการหายใจ: ให้ naloxone';
-    r.why=`ปลุกไม่ตื่น (POSS 4) ร่วมกับ${rr8?` RR ${rr}/นาที`:''}${rr8&&p.cyan?' และ':''}${p.cyan?' เขียว/SpO₂ ต่ำ':''}`;
-    r.acts=['หยุด opioid ทุกตัว: ปิด syringe driver แกะ patch งดมื้อถัดไป','เรียกปลุก กระตุ้น ให้ออกซิเจน แจ้งแพทย์',
-      'ให้ naloxone ขนาดเล็กทุก 2 นาทีตามด้านล่าง เป้าหมายคือ RR ≥ 8–10 ไม่ใช่ให้ตื่นเต็มที่',
-      'เฝ้า RR, POSS, SpO₂ ทุก 15 นาที'];
+    r.lv='stop'; r.title='Opioid-induced respiratory depression: give naloxone';
+    r.why=['POSS 4',rr8&&`RR ${rr}/min`,p.cyan&&'cyanosis/SpO₂ < 90%',p.pin&&'pinpoint pupils'].filter(Boolean).join(' · ');
+    r.acts=['หยุด opioid ทุกตัว: ปิด CSCI, ถอด fentanyl patch, omit oral dose','Stimulate, ให้ O₂, แจ้งแพทย์',
+      'Naloxone 20 mcg IV q2min (ดูวิธีด้านล่าง) titrate ให้ RR ≥ 8–10 ไม่ใช่ให้ตื่นเต็มที่',
+      'Monitor RR, POSS, SpO₂ q15min'];
     r.nal=true;
   } else if(p.sed===4||rr8||(p.sed>=3&&p.cyan)){
-    r.lv='stop'; r.title='อันตราย: หยุดยาและเฝ้าใกล้ชิด';
-    r.why=p.sed===4?'ปลุกไม่ตื่น (POSS 4) แต่ RR ยัง ≥ 8':rr8?`RR ${rr}/นาที แต่ยังปลุกตื่น`:'ง่วงมากร่วมกับเขียว/SpO₂ ต่ำ';
-    r.acts=['หยุด opioid ชั่วคราว: งดมื้อถัดไป ปิด syringe driver','เรียกปลุก กระตุ้นให้หายใจ ให้ออกซิเจน แจ้งแพทย์',
-      'เฝ้า RR, POSS, SpO₂ ทุก 15 นาที','เตรียม naloxone ให้ทันทีถ้า RR < 8 ร่วมกับปลุกไม่ตื่น หรือเขียว/SpO₂ < 90%'];
+    r.lv='stop'; r.title='Severe sedation: hold opioid, monitor closely';
+    r.why=p.sed===4?`POSS 4 · RR ${rr??'-'}/min (≥ 8)`:rr8?`RR ${rr}/min · POSS ${p.sed===0?'S':p.sed} (rousable)`:'POSS 3 · cyanosis/SpO₂ < 90%';
+    r.acts=['Hold opioid: omit dose ถัดไป ปิด CSCI ชั่วคราว','Stimulate, ให้ O₂, แจ้งแพทย์',
+      'Monitor RR, POSS, SpO₂ q15min','ให้ naloxone ทันทีถ้า RR < 8 ร่วมกับ POSS 4 หรือ cyanosis'];
   } else if(p.sed===3||rr10){
-    r.lv='warn'; r.title='ง่วงเกินที่ยอมรับได้ ยังไม่ต้องให้ naloxone';
-    r.why=p.sed===3?'POSS 3 หลับขณะคุย':`RR ${rr}/นาที`;
-    r.acts=['ห้ามเพิ่มโดส งดยามื้อถัดไป แล้วลดโดสประจำ 25–50%','เฝ้า RR และ POSS ทุก 1 ชม. จน POSS ≤ 2 และ RR ≥ 10',
-      'ทบทวนยากดประสาทอื่น: midazolam, benzodiazepine, gabapentin/pregabalin, antihistamine'];
+    r.lv='warn'; r.title='Unacceptable sedation: no naloxone yet';
+    r.why=p.sed===3?`POSS 3${rr?` · RR ${rr}/min`:''}`:`RR ${rr}/min · POSS ${p.sed===0?'S':p.sed}`;
+    r.acts=['ห้ามเพิ่มโดส omit dose ถัดไป แล้วลด regular dose 25–50%','Monitor RR และ POSS ใกล้ชิดจน POSS ≤ 2 และ RR ≥ 10',
+      'ทบทวน sedative ร่วม: midazolam/benzodiazepine, gabapentinoid, sedating antihistamine, antipsychotic'];
   } else if(p.myo){
-    r.lv='warn'; r.title='ไม่กดการหายใจ แต่มีพิษ opioid ต่อระบบประสาท';
-    r.why='กระตุก (myoclonus) เพ้อ หรือเห็นภาพหลอน';
-    r.acts=['ไม่เพิ่มโดส ลดโดสประจำ 25–50% (ถ้ายังปวด ให้เปลี่ยนชนิด opioid แทนการลด)','ให้น้ำให้เพียงพอ ตรวจการทำงานของไต แคลเซียม และหาสาเหตุเพ้ออื่น',
-      'ไตเสื่อมหรือได้ morphine ขนาดสูง: พิจารณาเปลี่ยนเป็น fentanyl','เพ้อมาก: haloperidol ได้ · naloxone ไม่ช่วยอาการนี้'];
+    r.lv='warn'; r.title='Opioid-induced neurotoxicity (OIN)';
+    r.why='Myoclonus / delirium / hallucinations · ไม่มี respiratory depression';
+    r.acts=['ไม่เพิ่มโดส · ถ้าคุมปวดได้ ลด regular dose 25–50% · ถ้ายังปวด ให้ opioid rotation (เช่น morphine → fentanyl)',
+      'Hydration, ตรวจ creatinine/eGFR และ Ca²⁺, หา reversible cause ของ delirium อื่น',
+      'Delirium: haloperidol · myoclonus รุนแรง: พิจารณา midazolam/clonazepam','Naloxone ไม่ใช่การรักษา OIN'];
   } else {
-    r.lv='ok'; r.title='ไม่พบสัญญาณ opioid เกินขนาด ปรับยาได้';
-    r.why=`POSS ${p.sed===0?'S':p.sed}${rr?` · RR ${rr}/นาที`:''}${p.pps!=null?` · PPS ${p.pps}%`:''}`;
-    r.acts=['ประเมิน POSS และ RR ก่อนให้ PRN ทุกครั้ง และหลังเพิ่มโดส (ยากินออกฤทธิ์สูงสุด ~60 นาที ยาฉีด SC ~30 นาที)','ง่วงมักเกิดใน 2–3 วันแรกหลังเพิ่มยา แล้วดีขึ้นเอง'];
-    if(p.pps!=null&&p.pps<=20) r.notes.push(['info',`PPS ${p.pps}%: ง่วง/หลับมากพบได้ตามระยะโรค ให้ประเมินความสุขสบายมากกว่าคะแนนง่วง`]);
+    r.lv='ok'; r.title='No signs of opioid toxicity: titration ได้';
+    r.why=[`POSS ${p.sed===0?'S':p.sed}`,rr&&`RR ${rr}/min`,p.pps!=null&&`PPS ${p.pps}%`].filter(Boolean).join(' · ');
+    r.acts=['ประเมิน POSS และ RR ก่อนให้ PRN และที่ peak effect หลังเพิ่มโดส (oral ~60 นาที, SC ~30 นาที)','Sedation หลังเพิ่มโดสมักดีขึ้นเองใน 3–5 วัน (tolerance) แต่ respiratory depression ต้องแก้ทันที'];
+    if(p.pps!=null&&p.pps<=20) r.notes.push(['info',`PPS ${p.pps}%: drowsiness เป็นส่วนหนึ่งของระยะโรค ประเมิน comfort มากกว่าคะแนน POSS`]);
   }
-  if(r.lv==='stop'&&(longActing||kidney)) r.notes.push(['warn',`${longActing?'ได้ยาออกฤทธิ์นาน ('+longActing+')':'eGFR < 30'}: ยาอยู่ในร่างกายนานกว่า naloxone ต้องเฝ้าอย่างน้อย 24 ชม. อาจต้องให้ซ้ำหรือหยดต่อเนื่อง`]);
-  if(p.pps==null&&(r.lv==='stop'||r.lv==='warn')) r.notes.push(['info','ใส่ PPS ด้วย เพื่อแยกยาเกินขนาดออกจากการดำเนินโรคระยะท้าย']);
+  if(r.lv==='stop'&&(longActing||kidney)) r.notes.push(['warn',`${longActing?'Long-acting opioid ('+longActing+')':'eGFR < 30'}: ออกฤทธิ์นานกว่า naloxone เสี่ยง re-narcotisation ต้อง monitor ≥ 24 ชม. อาจต้อง repeat bolus หรือ naloxone infusion`]);
+  if(p.pps==null&&(r.lv==='stop'||r.lv==='warn')) r.notes.push(['info','ใส่ PPS เพื่อแยก opioid toxicity ออกจาก terminal phase']);
   return r;
 }
+function longActingNames(){return S.rows.filter(r=>+r.qty>0&&!r.prn&&(D[r.drug].sr||D[r.drug].route==='td'||r.drug==='methadone')).map(r=>D[r.drug].n.split(' (')[0]).filter((v,i,a)=>a.indexOf(v)===i).join(', ');}
 function renderSafety(T,p){
   const box=$('#safeOut'); box.innerHTML='';
-  const longActing=S.rows.filter(r=>+r.qty>0&&!r.prn&&(D[r.drug].sr||D[r.drug].route==='td'||r.drug==='methadone')).map(r=>D[r.drug].n.split(' (')[0]).filter((v,i,a)=>a.indexOf(v)===i).join(', ');
-  const r=safety(p,{longActing});
+  const r=safety(p,{longActing:longActingNames()});
   box.append(el('div',{class:'verdict '+r.lv},el('b',{},r.title),el('span',{class:'why'},r.why)));
   box.append(el('ol',{class:'acts'},r.acts.map(t=>el('li',{},t))));
   const notes=r.notes.slice();
-  if(p.myo&&!r.title.includes('ระบบประสาท')) notes.push(['warn','กระตุก/เพ้อ/เห็นภาพหลอน = opioid neurotoxicity: ลดโดส 25–50% ให้น้ำ ตรวจไตและแคลเซียม พิจารณาเปลี่ยนเป็น fentanyl naloxone ไม่ช่วยอาการนี้']);
+  if(p.myo&&!r.title.includes('OIN')) notes.push(['warn','มี myoclonus/delirium ร่วม = opioid-induced neurotoxicity: เมื่อพ้นภาวะเร่งด่วน ให้ลดโดสหรือ opioid rotation · naloxone ไม่ใช่การรักษา OIN']);
   if(notes.length){const a=el('div',{class:'alerts'});renderAlerts(a,notes);box.append(a);}
   const nal=el('details',{class:'nal'});nal.open=r.nal;
-  nal.innerHTML=`<summary>แนวทาง naloxone ในผู้ป่วยที่ใช้ opioid ประจำ</summary>
-  <h4>ให้เมื่อ</h4><ul><li>RR &lt; 8/นาที <b>ร่วมกับ</b> ปลุกไม่ตื่น (POSS 4) หรือเขียว/SpO₂ &lt; 90%</li><li>และการแก้ไขยังตรงกับเป้าหมายการดูแลของผู้ป่วย</li></ul>
-  <h4>ไม่ให้เมื่อ</h4><ul><li>แค่ง่วง (POSS 2–3) แต่ปลุกตื่นและ RR ≥ 8: งดหรือลดยาแล้วเฝ้าดู</li><li>ผู้ป่วยระยะท้าย (PPS ≤ 30) ที่ซึมหรือหายใจช้าจากตัวโรค</li><li>กระตุก เพ้อ เห็นภาพหลอน: ให้ลดหรือเปลี่ยนยาแทน</li></ul>
-  <h4>วิธีให้</h4><ul><li>Naloxone 400 mcg (1 ml) ผสม NSS 9 ml = 40 mcg/ml</li><li>ฉีด IV ครั้งละ 0.5 ml (20 mcg) ทุก 2 นาที จน RR ≥ 8–10 และตอบสนองได้</li><li>ห้ามให้ 400 mcg ทีเดียว: ทำให้ปวดรุนแรงฉับพลัน ถอนยา กระสับกระส่าย</li><li>ไม่มีเส้นเลือด: ให้ SC/IM ได้ แต่ออกฤทธิ์ช้ากว่า ใช้ขนาดตามแนวทาง รพ.</li></ul>
-  <h4>หลังให้</h4><ul><li>Naloxone ออกฤทธิ์ราว 45–90 นาที สั้นกว่า morphine อาจกลับมาซึมอีก เฝ้า RR, POSS ทุก 15 นาที อย่างน้อย 2 ชม. หลังเข็มสุดท้าย</li><li>MST, Kapanol, patch หรือไตวาย: เฝ้า ≥ 24 ชม. ถ้าต้องให้ซ้ำหลายครั้ง พิจารณาหยด naloxone ชั่วโมงละ 2/3 ของขนาดรวมที่ได้ผลครั้งแรก ปรับตาม RR</li><li>ไม่ดีขึ้นหลังให้หลายครั้ง: หาสาเหตุอื่น เช่น midazolam/benzodiazepine, น้ำตาลต่ำ, แคลเซียมสูง, sepsis, stroke, CO₂ คั่ง</li><li>เมื่อกลับมาปกติ เริ่ม opioid ใหม่ที่ราว 50% ของโดสเดิม และแก้สาเหตุ เช่น ไตแย่ลงหรือเพิ่มยาเร็วเกิน เพื่อไม่ให้เกิดวิกฤตปวด</li></ul>`;
+  nal.innerHTML=`<summary>Naloxone ในผู้ป่วยที่ได้ opioid ประจำ</summary>
+  <h4>Indication</h4><ul><li>RR &lt; 8/min <b>ร่วมกับ</b> POSS 4 (barely rousable/unconscious) หรือ cyanosis/SpO₂ &lt; 90%</li><li>และการ reverse สอดคล้องกับ goals of care</li></ul>
+  <h4>ไม่ใช้เมื่อ</h4><ul><li>Drowsy (POSS 2–3) ที่ปลุกตื่นและ RR ≥ 8: omit/ลดโดส แล้ว monitor</li><li>Terminal phase (PPS ≤ 30) ที่ซึมหรือหายใจช้าจากตัวโรค</li><li>Opioid-induced neurotoxicity (myoclonus, delirium): ลดโดสหรือ rotation</li></ul>
+  <h4>Dose (IV titration)</h4><ul><li>Naloxone 400 mcg/1 ml + NSS 9 ml = 40 mcg/ml</li><li>ให้ 0.5 ml (20 mcg) IV q2min จน RR ≥ 8–10 และ rousable</li><li>หลีกเลี่ยง 400 mcg IV bolus ครั้งเดียว: เสี่ยง acute withdrawal, pain crisis, agitation</li><li>ไม่มี IV access: ให้ SC/IM ได้ แต่ onset ช้าและ titrate ยาก ใช้ขนาดตามแนวทาง รพ.</li></ul>
+  <h4>หลังให้</h4><ul><li>Naloxone duration ~30–90 นาที สั้นกว่า morphine: monitor RR, POSS q15min อย่างน้อย 2 ชม. หลัง dose สุดท้าย</li><li>MST, Kapanol, fentanyl patch หรือ renal failure: monitor ≥ 24 ชม. ถ้าต้อง repeat หลายครั้ง ให้ naloxone infusion อัตราต่อชั่วโมง ≈ 2/3 ของ total bolus ที่ได้ผล แล้ว titrate ตาม RR</li><li>ไม่ตอบสนองหลังหลาย dose: หาสาเหตุอื่น เช่น benzodiazepine, hypoglycaemia, hypercalcaemia, sepsis, stroke, hypercapnia</li><li>เมื่อ RR และ POSS กลับปกติ restart opioid ที่ ~50% ของโดสเดิม และแก้สาเหตุ (AKI, titration เร็วเกิน) เพื่อป้องกัน pain crisis</li></ul>`;
   box.append(nal);
 }
 
@@ -656,9 +673,9 @@ function renderTit(T,p){
     newOME=frail(p)||(p.egfr!=null&&p.egfr<60)?15:30;
     steps.push(`ผู้ป่วย opioid-naïve: เริ่ม ${newOME} mg OME/วัน (${newOME===15?'ผู้สูงอายุ/ไตเสื่อม/เปราะบาง: Mo 2.5 mg q4h':'Mo 5 mg q4h ตาม WHO/NCCN/ESMO'})`);
   } else if(unsafe&&p.pps!=null&&p.pps<=30&&!p.pin&&!p.trig){
-    newOME=T.sch; steps.push(`PPS ${p.pps}% ซึม/หายใจช้าน่าจะจากโรคระยะท้าย → ไม่เพิ่ม คงโดสเดิม ${fmt(newOME)} mg (ลดได้ถ้าสงบดีและ RR ช้ามาก)`);
+    newOME=T.sch; steps.push(`PPS ${p.pps}% likely terminal phase → ไม่เพิ่ม คงโดสเดิม ${fmt(newOME)} mg (ลดได้ถ้าสงบดีและ RR ช้ามาก)`);
   } else if(unsafe){
-    newOME=T.sch*0.75; steps.push(`${p.myo&&p.sed<3&&!(p.rr>0&&p.rr<10)?'มีกระตุก/เพ้อจาก opioid':'ง่วงมาก/หายใจช้า'} → ไม่เพิ่ม ลด 25% = ${fmt(newOME)} mg (ดูการ์ดประเมินความง่วงหน้ายาเดิม)`);
+    newOME=T.sch*0.75; steps.push(`${p.myo&&p.sed<3&&!(p.rr>0&&p.rr<10)&&!p.cyan?'Opioid-induced neurotoxicity':'Excess sedation / low RR'} → ไม่เพิ่ม ลด 25% = ${fmt(newOME)} mg (ดูการ์ด Sedation & respiration)`);
   } else {
     const base=T.sch+T.prn; steps.push(`โดสประจำ + PRN ที่ใช้ = ${fmt(base)} mg OME`);
     let f=1, why='คุมปวดได้ คงโดสรวมเดิม';
@@ -797,10 +814,54 @@ function update(){
   const v=x=>$(x).value===''?'-':$(x).value;
   $('#ptSum').textContent=`อายุ ${v('#age')} · eGFR ${v('#egfr')} · RR ${v('#rr')} · ${sedTxt}${p.pps!=null?' · PPS '+p.pps+'%':''}${p.liver?' · ตับบกพร่อง':''} · ยา ${S.rows.length} รายการ`;
   fillRowOrders();
-  renderMedsSummary(T,p); renderSafety(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
+  renderMedsSummary(T,p); renderSafety(T,p); renderMini(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
 }
 $('#addRow').addEventListener('click',()=>{S.rows.push({drug:'mosyr',qty:2.5,cnt:1,prn:true});renderRows();update();});
 ['#age','#egfr','#rr','#sed','#pps','#pin','#cyan','#trig','#myo','#liver','#pain','#sdVol','#sdDil','#sdDev','#sdDur','#sdLen'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
+// ---------- floating patient strip / bubble ----------
+const mini=$('#ptMini'),bub=$('#ptBubble');
+let ptVisible=true,miniCollapsed=false,bpos={side:'right',y:.3};
+try{miniCollapsed=localStorage.getItem('pd_mini')==='1';const q=JSON.parse(localStorage.getItem('pd_bpos')||'null');if(q&&q.side)bpos=q;}catch(e){}
+function renderMini(T,p){
+  const lv=safety(p,{longActing:longActingNames()}).lv;
+  const parts=[p.age?p.age+' ปี':null,p.egfr!=null?'eGFR '+p.egfr:null,p.rr?'RR '+p.rr:null,'POSS '+(p.sed===0?'S':p.sed),p.pps!=null?'PPS '+p.pps+'%':null,'OME '+fmt(T.total)].filter(Boolean);
+  mini.querySelector('.txt').textContent=parts.join(' · ');
+  [mini,bub].forEach(x=>x.querySelector('.sdot').className='sdot '+(lv==='ok'?'':lv));
+  bub.setAttribute('aria-label','แสดงแถบข้อมูลผู้ป่วย: '+parts.join(', '));
+}
+function placeBubble(){const w=innerWidth,h=innerHeight;bub.style.top=Math.min(Math.max(bpos.y*h,56),h-140)+'px';bub.style.left=(bpos.side==='left'?10:w-58)+'px';}
+function syncMini(){mini.hidden=ptVisible||miniCollapsed;bub.hidden=ptVisible||!miniCollapsed;if(!bub.hidden)placeBubble();}
+function saveMini(){try{localStorage.setItem('pd_mini',miniCollapsed?'1':'0');localStorage.setItem('pd_bpos',JSON.stringify(bpos));}catch(e){}}
+function collapseMini(side){if(side)bpos.side=side;miniCollapsed=true;saveMini();
+  mini.style.opacity='0';mini.style.transform=`translateX(calc(-50% + ${bpos.side==='left'?'-':''}60vw))`;
+  setTimeout(()=>{mini.style.opacity='';mini.style.transform='';syncMini();},200);}
+function expandMini(){miniCollapsed=false;saveMini();syncMini();}
+function openPatient(){$('#ptCard').open=true;window.scrollTo({top:0,behavior:'smooth'});}
+new IntersectionObserver(es=>{ptVisible=es[0].isIntersecting;syncMini();}).observe($('#ptCard'));
+addEventListener('resize',()=>{if(!bub.hidden)placeBubble();});
+// strip: tap = open patient card, swipe left/right/up = shrink to bubble
+let sw=null;
+mini.addEventListener('pointerdown',e=>{if(e.target.closest('.mini-x'))return;sw={x:e.clientX,y:e.clientY,dx:0,dy:0};mini.classList.add('dragging');try{mini.setPointerCapture(e.pointerId)}catch(_){}});
+mini.addEventListener('pointermove',e=>{if(!sw)return;sw.dx=e.clientX-sw.x;sw.dy=e.clientY-sw.y;
+  if(Math.abs(sw.dx)>Math.abs(sw.dy)){mini.style.transform=`translateX(calc(-50% + ${sw.dx}px))`;mini.style.opacity=String(Math.max(.3,1-Math.abs(sw.dx)/250));}});
+const endSwipe=e=>{if(!sw)return;const {dx,dy}=sw;sw=null;mini.classList.remove('dragging');
+  if(Math.abs(dx)>60) return collapseMini(dx<0?'left':'right');
+  if(dy<-24&&Math.abs(dy)>Math.abs(dx)) return collapseMini();
+  mini.style.transform='';mini.style.opacity='';
+  if(Math.abs(dx)<6&&Math.abs(dy)<6&&e.type==='pointerup') openPatient();};
+mini.addEventListener('pointerup',endSwipe);mini.addEventListener('pointercancel',endSwipe);
+mini.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPatient();}});
+mini.querySelector('.mini-x').addEventListener('click',e=>{e.stopPropagation();collapseMini();});
+// bubble: drag anywhere, snaps to nearest side; tap = show strip again
+let bd=null;
+bub.addEventListener('pointerdown',e=>{const r=bub.getBoundingClientRect();bd={ox:e.clientX-r.left,oy:e.clientY-r.top,x:e.clientX,y:e.clientY,moved:false};bub.setPointerCapture(e.pointerId);});
+bub.addEventListener('pointermove',e=>{if(!bd)return;if(Math.hypot(e.clientX-bd.x,e.clientY-bd.y)>6)bd.moved=true;if(!bd.moved)return;
+  bub.classList.add('dragging');bub.style.left=(e.clientX-bd.ox)+'px';bub.style.top=(e.clientY-bd.oy)+'px';});
+bub.addEventListener('pointerup',e=>{if(!bd)return;const m=bd.moved;bd=null;bub.classList.remove('dragging');
+  if(!m)return expandMini();const r=bub.getBoundingClientRect();bpos={side:r.left+24<innerWidth/2?'left':'right',y:r.top/innerHeight};saveMini();placeBubble();});
+bub.addEventListener('pointercancel',()=>{bd=null;bub.classList.remove('dragging');placeBubble();});
+bub.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();expandMini();}});
+
 renderRows(); update();
 // clear patient (tap twice to confirm)
 let clrT=null;
