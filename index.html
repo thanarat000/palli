@@ -67,8 +67,11 @@ button{font:inherit;cursor:pointer;border:none;border-radius:14px;min-height:46p
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .seg button{background:var(--bg);color:var(--ink);border:1.5px solid var(--line);font-weight:500;min-height:42px;padding:6px 12px}
 .seg button[aria-pressed="true"]{background:var(--sage);color:var(--on-accent);border-color:var(--sage)}
-.row{display:grid;grid-template-columns:1fr 84px 84px;gap:8px;align-items:end;padding:10px;border-radius:14px;background:var(--bg)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;padding:10px;border-radius:14px;background:var(--bg)}
 .row .full{grid-column:1/-1}
+.roword{grid-column:1/-1;background:var(--card);border-radius:10px;padding:8px 10px;font-size:.9rem;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.roword b{font-weight:600}
+.roword .o{color:var(--sage);font-weight:600;white-space:nowrap}
 .row .del{margin-left:auto;background:transparent;color:var(--stop);border:1.5px solid color-mix(in srgb,var(--stop) 45%,transparent);display:flex;align-items:center;gap:4px}
 .row .del svg{width:16px;height:16px}
 .clearbtn{background:var(--stop-soft);color:var(--stop);min-height:38px;padding:6px 12px;font-size:.85rem;flex:none}
@@ -253,7 +256,7 @@ details[open] .chev{transform:rotate(180deg)}
     <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
   </section>
 
-  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.4</p>
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.5</p>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
@@ -265,8 +268,8 @@ const el=(t,a={},...c)=>{const e=document.createElement(t);for(const k in a){if(
 const fmt=(n,d=1)=>{if(!isFinite(n))return '0';const r=Math.round(n*Math.pow(10,d))/Math.pow(10,d);return r.toLocaleString('en-US',{maximumFractionDigits:d});};
 
 const S={ratio:3, rows:[
-  {drug:'mst30',qty:1,freq:2,prn:false},
-  {drug:'mosyr',qty:3,freq:3,prn:true}
+  {drug:'mst30',qty:1,int:12,prn:false},
+  {drug:'mosyr',qty:3,cnt:3,prn:true}
 ], target:'mst', red:'auto', tiForm:'mst', sdOp:'morphine', sdOpDose:null, addons:{}};
 S.prnInt=1;
 try{const r=localStorage.getItem('pd_ratio'); if(r) S.ratio=+r; const q=localStorage.getItem('pd_prn'); if(q) S.prnInt=+q;}catch(e){}
@@ -314,7 +317,30 @@ function toOME(key,dailyAmt){ // dailyAmt in drug units of mg/mcg (already × pe
     default: return dailyAmt;
   }
 }
-function rowCalc(r){const d=D[r.drug];const q=+r.qty||0;const f=D[r.drug].route==='td'?1:(+r.freq||0);const amt=q*d.per*f;return {amt,ome:toOME(r.drug,amt),d,f};}
+const DEF_INT={tramadol:6,mst10:12,mst30:12,mst60:12,kap20:12,moir:4,mosyr:4,oxyir:4,oxycr:12,hm:4,codeine:6,tapent:6,methadone:8,moinj:4,pethinj:4};
+const ORAL_INT=[4,6,8,12,24], INJ_INT=[1,2,3,4,6,8,12];
+function normRow(r){const d=D[r.drug];
+  if(r.int==null) r.int=DEF_INT[r.drug]||4;
+  if(r.cnt==null) r.cnt=1;
+  if(d.route==='inj'&&!r.mode) r.mode=r.drug==='fentinj'?'cont_h':'bolus';
+  if(d.route!=='inj') r.mode=null;
+  if(d.route==='td') r.prn=false;
+  return r;}
+function rowCalc(r){normRow(r);const d=D[r.drug];const q=+r.qty||0;let amt;
+  if(d.route==='td') amt=q*d.per;                       // mcg/h
+  else if(r.prn) amt=q*d.per*(+r.cnt||0);
+  else if(r.mode==='cont_h') amt=q*24;
+  else if(r.mode==='cont_24') amt=q;
+  else amt=q*d.per*(24/(+r.int||24));
+  return {amt,ome:toOME(r.drug,amt),d};}
+function rowOrder(r){normRow(r);const d=D[r.drug];const q=+r.qty||0;const nm=d.n;
+  if(d.route==='td') return `${nm} ${fmt(q)} แผ่น เปลี่ยน q72h`;
+  const dose=d.u==='mg'||d.u==='mcg'?`${fmt(q,2)} ${d.u}`:`${fmt(q,2)} ${d.u} (${fmt(q*d.per,2)} ${d.cls==='fentanyl'||d.route==='td'?'mcg':'mg'})`;
+  const rt=d.route==='inj'?(r.drug==='pethinj'?'IV':'IV/SC'):'PO';
+  if(r.prn) return `${nm} ${dose} ${rt} PRN · ใช้ไป ${fmt(+r.cnt||0)} ครั้ง/24 ชม.`;
+  if(r.mode==='cont_h') return `${nm} ${fmt(q,2)} ${d.u}/ชม. หยดต่อเนื่อง`;
+  if(r.mode==='cont_24') return `${nm} ${fmt(q,2)} ${d.u}/24 ชม. SC syringe driver`;
+  return `${nm} ${dose} ${rt} q${r.int}h`;}
 
 function totals(){
   let sch=0,prn=0,classes=new Set(),tram=0,hasPatch=false,hasPeth=false,hasMeth=false,srPrn=[];
@@ -344,30 +370,40 @@ function renderAlerts(box,list){box.innerHTML='';list.forEach(([k,t])=>box.appen
 function renderRows(){
   const box=$('#rows'); box.innerHTML='';
   S.rows.forEach((r,i)=>{
-    const d=D[r.drug];
+    normRow(r); const d=D[r.drug];
     const opt=([k,v])=>el('option',{value:k,selected:k===r.drug},v.n);
     const sel=el('select',{id:'drug'+i,'aria-label':'ยา'},
       el('optgroup',{label:'ยาใน รพ.นครไทย'},Object.entries(D).filter(([k,v])=>!v.out).map(opt)),
       el('optgroup',{label:'ยานอกบัญชี (ผู้ป่วยส่งต่อ)'},Object.entries(D).filter(([k,v])=>v.out).map(opt)));
-    sel.addEventListener('change',()=>{r.drug=sel.value; if(D[sel.value].route==='td'){r.qty=1;r.prn=false;} renderRows(); update();});
+    sel.addEventListener('change',()=>{r.drug=sel.value;r.int=null;r.mode=null;if(D[sel.value].route==='td'){r.qty=1;} renderRows(); update();});
+    const cells=[el('label',{class:'f full'},'ยา',sel)];
+    if(d.route==='inj'&&!r.prn){
+      const ms=el('select',{id:'mode'+i},[['bolus','ฉีดเป็นครั้ง (IV/SC bolus)'],['cont_h','หยดต่อเนื่อง ต่อชั่วโมง'],['cont_24','SC drip / syringe driver ต่อ 24 ชม.']].map(([k,l])=>el('option',{value:k,selected:r.mode===k},l)));
+      ms.addEventListener('change',()=>{r.mode=ms.value;renderRows();update();});
+      cells.push(el('label',{class:'f full'},'วิธีให้',ms));
+    }
+    const qlabel=d.route==='td'?'จำนวนแผ่น':r.mode==='cont_h'?`${d.u}/ชม.`:r.mode==='cont_24'?`${d.u}/24 ชม.`:`${d.u}/ครั้ง`;
     const qty=el('input',{id:'qty'+i,type:'number',inputmode:'decimal',min:0,step:'any',value:r.qty});
     qty.addEventListener('input',()=>{r.qty=qty.value;update();});
-    const freq=el('input',{id:'freq'+i,type:'number',inputmode:'numeric',min:0,step:1,value:r.freq,disabled:d.route==='td'});
-    freq.addEventListener('input',()=>{r.freq=freq.value;update();});
+    cells.push(el('label',{class:'f'},qlabel,qty));
+    if(d.route==='td') cells.push(el('div',{class:'f'},'ความถี่',el('div',{style:'padding:10px 0;color:var(--ink);font-weight:600'},'q72h')));
+    else if(r.prn){const c=el('input',{id:'cnt'+i,type:'number',inputmode:'numeric',min:0,step:1,value:r.cnt});c.addEventListener('input',()=>{r.cnt=c.value;update();});cells.push(el('label',{class:'f'},'ใช้ไปกี่ครั้ง/24 ชม.',c));}
+    else if(r.mode==='cont_h'||r.mode==='cont_24') cells.push(el('div',{class:'f'},'ความถี่',el('div',{style:'padding:10px 0;color:var(--ink);font-weight:600'},'ต่อเนื่อง')));
+    else {const list=d.route==='inj'?INJ_INT:ORAL_INT; if(!list.includes(+r.int))r.int=list[3]||list[0];
+      const is=el('select',{id:'int'+i},list.map(h=>el('option',{value:h,selected:+r.int===h},`q${h}h`+(h===24?' (OD)':''))));
+      is.addEventListener('change',()=>{r.int=+is.value;update();});cells.push(el('label',{class:'f'},'ทุกกี่ชั่วโมง',is));}
+    cells.push(el('div',{class:'roword'},el('b',{class:'ordtxt'},''),el('span',{class:'o'},'')));
     const del=el('button',{class:'del','aria-label':'ลบยานี้',onclick:()=>{S.rows.splice(i,1);renderRows();update();}});del.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>ลบ</span>';
-    const chip=el('div',{class:'typechip'},
-      el('button',{'aria-pressed':String(!r.prn),onclick:()=>{r.prn=false;renderRows();update();}},'ให้ประจำ'),
-      d.route==='td'?null:el('button',{'aria-pressed':String(r.prn),onclick:()=>{r.prn=true;renderRows();update();}},'PRN ที่ใช้จริง'), del);
-    const c=rowCalc(r);
-    const qlabel=d.route==='td'?'จำนวนแผ่น':(d.u==='mg'||d.u==='mcg'?d.u+'/ครั้ง':d.u+'/ครั้ง');
-    box.append(el('div',{class:'row'},
-      el('label',{class:'f full'},'ยา',sel),
-      el('label',{class:'f'},qlabel,qty),
-      el('label',{class:'f'},d.route==='td'?'—':'ครั้ง/วัน',freq),
-      el('div',{class:'f'},'OME',el('div',{style:'font-weight:600;color:var(--ink);padding:10px 0;font-variant-numeric:tabular-nums'},fmt(c.ome))),
-      chip));
+    cells.push(el('div',{class:'typechip'},
+      el('button',{'aria-pressed':String(!r.prn),onclick:()=>{r.prn=false;renderRows();update();}},'ยาประจำ'),
+      d.route==='td'?null:el('button',{'aria-pressed':String(r.prn),onclick:()=>{r.prn=true;renderRows();update();}},'PRN ที่ใช้จริง'), del));
+    box.append(el('div',{class:'row'},cells));
   });
+  fillRowOrders();
 }
+function fillRowOrders(){document.querySelectorAll('#rows .row').forEach((rw,i)=>{const r=S.rows[i];if(!r)return;const c=rowCalc(r);
+  rw.querySelector('.ordtxt').textContent=rowOrder(r);
+  rw.querySelector('.roword .o').textContent=r.drug==='methadone'?'ไม่รวมใน OME':(c.d.route==='td'?`= ${fmt(c.amt,2)} mcg/h`:`= ${fmt(c.amt,2)} ${c.d.cls==='fentanyl'?'mcg':'mg'}/วัน`)+` · OME ${fmt(c.ome)}`;});}
 function renderMedsSummary(T,p){
   $('#omeBig').textContent=fmt(T.total);
   const tol=T.total>=60;
@@ -634,10 +670,10 @@ function update(){
   const sedTxt=$('#sed').selectedOptions[0].textContent.split('·')[1].trim();
   const v=x=>$(x).value===''?'-':$(x).value;
   $('#ptSum').textContent=`อายุ ${v('#age')} · eGFR ${v('#egfr')} · RR ${v('#rr')} · ${sedTxt}${p.liver?' · ตับบกพร่อง':''} · ยา ${S.rows.length} รายการ`;
-  document.querySelectorAll('#rows .row').forEach((rw,i)=>{const c=rowCalc(S.rows[i]);const o=rw.querySelectorAll('.f')[3];if(o)o.lastChild.textContent=fmt(c.ome);});
+  fillRowOrders();
   renderMedsSummary(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
 }
-$('#addRow').addEventListener('click',()=>{S.rows.push({drug:'mosyr',qty:2.5,freq:1,prn:true});renderRows();update();});
+$('#addRow').addEventListener('click',()=>{S.rows.push({drug:'mosyr',qty:2.5,cnt:1,prn:true});renderRows();update();});
 ['#age','#egfr','#rr','#sed','#liver','#pain','#sdVol','#sdDil','#sdDev','#sdDur','#sdLen'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
 renderRows(); update();
 // clear patient (tap twice to confirm)
