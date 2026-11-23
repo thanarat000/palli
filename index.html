@@ -8,7 +8,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>PalliDose นครไทย</title>
+<title>PalliDose</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,9 +67,11 @@ button{font:inherit;cursor:pointer;border:none;border-radius:14px;min-height:46p
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .seg button{background:var(--bg);color:var(--ink);border:1.5px solid var(--line);font-weight:500;min-height:42px;padding:6px 12px}
 .seg button[aria-pressed="true"]{background:var(--sage);color:var(--on-accent);border-color:var(--sage)}
-.row{display:grid;grid-template-columns:1fr 84px 84px 40px;gap:8px;align-items:end;padding:10px;border-radius:14px;background:var(--bg)}
+.row{display:grid;grid-template-columns:1fr 84px 84px;gap:8px;align-items:end;padding:10px;border-radius:14px;background:var(--bg)}
 .row .full{grid-column:1/-1}
-.row .del{background:transparent;color:var(--muted);min-height:46px;padding:0;font-size:1.3rem}
+.row .del{margin-left:auto;background:transparent;color:var(--stop);border:1.5px solid color-mix(in srgb,var(--stop) 45%,transparent);display:flex;align-items:center;gap:4px}
+.row .del svg{width:16px;height:16px}
+.clearbtn{background:var(--stop-soft);color:var(--stop);min-height:38px;padding:6px 12px;font-size:.85rem;flex:none}
 .typechip{display:flex;gap:6px;grid-column:1/-1}
 .typechip button{min-height:34px;padding:4px 12px;font-size:.85rem;background:var(--card);border:1.5px solid var(--line);color:var(--ink);font-weight:500}
 .typechip button[aria-pressed="true"]{background:var(--apricot-soft);border-color:var(--apricot)}
@@ -138,12 +140,12 @@ details[open] .chev{transform:rotate(180deg)}
 <div class="wrap">
   <header class="top">
     <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/><path d="M9 12h6M12 9v6"/></svg></div>
-    <div><h1>PalliDose นครไทย</h1><p class="sub">คำนวณ opioid และ syringe driver สำหรับผู้ป่วยประคับประคอง</p></div>
+    <div><h1>PalliDose</h1><p class="sub">คำนวณ opioid และ syringe driver สำหรับผู้ป่วยประคับประคอง</p></div>
     <button class="themebtn" id="themeBtn" aria-label="เปลี่ยนธีม"></button>
   </header>
 
   <details class="card pt" id="ptCard" open>
-    <summary><div><h2>ข้อมูลผู้ป่วย</h2><div class="ptsum" id="ptSum"></div></div><svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <summary><div style="flex:1;min-width:0"><h2>ข้อมูลผู้ป่วย</h2><div class="ptsum" id="ptSum"></div></div><button class="clearbtn" id="clearBtn" type="button">ล้างข้อมูล</button><svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
     <div class="grid" style="margin-top:12px">
       <label class="f">อายุ (ปี)<input id="age" type="number" inputmode="numeric" min="18" max="120" value="68"></label>
       <label class="f">eGFR (mL/min)<input id="egfr" type="number" inputmode="numeric" min="0" max="150" value="55"></label>
@@ -198,10 +200,14 @@ details[open] .chev{transform:rotate(180deg)}
   <!-- TAB 4: syringe driver -->
   <section id="tab-sd" class="tab" role="tabpanel" hidden>
     <div class="card">
-      <div><h2>Syringe driver 24 ชม.</h2><p class="note">ผสมยาให้ SC ต่อเนื่อง คำนวณปริมาตรและอัตรา mL/h</p></div>
+      <div><h2>Syringe driver</h2><p class="note">ผสมยาให้ SC ต่อเนื่อง ได้เป็น order พร้อมวิธีผสมและอัตราตามเครื่องที่ใช้</p></div>
       <div class="grid">
-        <label class="f">ปริมาตรรวมใน syringe
-          <select id="sdVol"><option value="12">12 ml (0.5 ml/h)</option><option value="24" selected>24 ml (1 ml/h)</option><option value="48">48 ml (2 ml/h)</option></select></label>
+        <label class="f">ชนิดเครื่อง
+          <select id="sdDev"><option value="mlh">Syringe pump (ml/h)</option><option value="mm24">Driver mm/24 ชม. (เช่น Graseby MS26)</option><option value="mmh">Driver mm/ชม. (เช่น Graseby MS16A)</option></select></label>
+        <label class="f">ระยะเวลาต่อ 1 syringe
+          <select id="sdDur"><option value="12">12 ชม.</option><option value="24" selected>24 ชม.</option><option value="48">48 ชม.</option><option value="72">72 ชม.</option></select></label>
+        <label class="f">ปริมาตรรวม (ml)<input id="sdVol" type="number" inputmode="decimal" min="1" step="any" value="24"></label>
+        <label class="f" id="sdLenWrap">ความยาวของเหลว (mm)<input id="sdLen" type="number" inputmode="decimal" min="1" step="any" value="48"></label>
         <label class="f">สารเจือจาง
           <select id="sdDil"><option value="WFI">Sterile water (WFI)</option><option value="NSS">NSS 0.9%</option></select></label>
       </div>
@@ -245,7 +251,7 @@ details[open] .chev{transform:rotate(180deg)}
     <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
   </section>
 
-  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.2</p>
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.3</p>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
@@ -322,10 +328,10 @@ function renderRows(){
     qty.addEventListener('input',()=>{r.qty=qty.value;update();});
     const freq=el('input',{id:'freq'+i,type:'number',inputmode:'numeric',min:0,step:1,value:r.freq,disabled:r.drug==='patch'});
     freq.addEventListener('input',()=>{r.freq=freq.value;update();});
-    const del=el('button',{class:'del','aria-label':'ลบยา',onclick:()=>{S.rows.splice(i,1);renderRows();update();}},'×');
+    const del=el('button',{class:'del','aria-label':'ลบยานี้',onclick:()=>{S.rows.splice(i,1);renderRows();update();}});del.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>ลบ</span>';
     const chip=el('div',{class:'typechip'},
       el('button',{'aria-pressed':String(!r.prn),onclick:()=>{r.prn=false;renderRows();update();}},'ให้ประจำ'),
-      r.drug==='patch'?null:el('button',{'aria-pressed':String(r.prn),onclick:()=>{r.prn=true;renderRows();update();}},'PRN ที่ใช้จริง'));
+      r.drug==='patch'?null:el('button',{'aria-pressed':String(r.prn),onclick:()=>{r.prn=true;renderRows();update();}},'PRN ที่ใช้จริง'), del);
     const c=rowCalc(r);
     const qlabel=r.drug==='patch'?'จำนวนแผ่น':(d.u==='mg'||d.u==='mcg'?d.u+'/ครั้ง':d.u+'/ครั้ง');
     box.append(el('div',{class:'row'},
@@ -333,7 +339,7 @@ function renderRows(){
       el('label',{class:'f'},qlabel,qty),
       el('label',{class:'f'},r.drug==='patch'?'—':'ครั้ง/วัน',freq),
       el('div',{class:'f'},'OME',el('div',{style:'font-weight:600;color:var(--ink);padding:10px 0;font-variant-numeric:tabular-nums'},fmt(c.ome))),
-      del, chip));
+      chip));
   });
 }
 function renderMedsSummary(T,p){
@@ -525,17 +531,30 @@ function renderSD(T,p){
         a.separate?el('div',{class:'note'},'ให้ SC แยกวันละครั้ง ไม่ผสมกับยาอื่น'):el('div',{class:'grid'},el('label',{class:'f'},'mg/24 ชม.',d),el('label',{class:'f'},'แอมปูล mg/ml',c)))));
     });}
   // compute
-  const vol=+$('#sdVol').value, dil=$('#sdDil').value;
-  const lines=[],steps=[],alerts=[];let used=0,count=0;
-  if(S.sdOp!=='none'&&opDose>0){const v=opDose/opConc;used+=v;count++;
-    lines.push([`${S.sdOp==='morphine'?'Morphine':'Fentanyl'} ${fmt(opDose)} ${unit}`,`${fmt(v,2)} ml (${opConc} ${unit}/ml)`]);}
+  const vol=+$('#sdVol').value||0, dil=$('#sdDil').value, dev=$('#sdDev').value, dur=+$('#sdDur').value, len=+$('#sdLen').value||0, k=dur/24;
+  $('#sdLenWrap').hidden=dev==='mlh';
+  const lines=[],steps=[],alerts=[],parts=[];let used=0,count=0;
+  const dilName=dil==='WFI'?'Sterile water':'NSS 0.9%';
+  if(S.sdOp!=='none'&&opDose>0){const amt=opDose*k,v=amt/opConc;used+=v;count++;const nm=S.sdOp==='morphine'?'Morphine':'Fentanyl';
+    parts.push(`${nm} ${fmt(amt,2)} ${unit}`);
+    lines.push([`ดูด ${nm} ${fmt(amt,2)} ${unit} = ${fmt(v,2)} ml`,`แอมปูล ${opConc} ${unit}/ml${k!==1?` · ${fmt(opDose)} ${unit}/24 ชม. × ${dur} ชม.`:''}`]);}
   const on=ADD.filter(a=>S.addons[a.k].on);
-  on.filter(a=>!a.separate).forEach(a=>{const st=S.addons[a.k];if(!(st.dose>0&&st.conc>0))return;const v=st.dose/st.conc;used+=v;count++;
-    lines.push([`${a.n.split(' (')[0]} ${fmt(st.dose)} mg`,`${fmt(v,2)} ml (${st.conc} mg/ml)`]);
+  on.filter(a=>!a.separate).forEach(a=>{const st=S.addons[a.k];if(!(st.dose>0&&st.conc>0))return;const amt=st.dose*k,v=amt/st.conc;used+=v;count++;const nm=a.n.split(' (')[0];
+    parts.push(`${nm} ${fmt(amt,2)} mg`);
+    lines.push([`ดูด ${nm} ${fmt(amt,2)} mg = ${fmt(v,2)} ml`,`แอมปูล ${st.conc} mg/ml${k!==1?` · ${fmt(st.dose)} mg/24 ชม. × ${dur} ชม.`:''}`]);
     if(st.dose>a.max)alerts.push(['warn',`${a.n} ${st.dose} mg/24 ชม. สูงกว่าช่วงที่ใช้ทั่วไป (${a.rng})`]);});
   const diluent=vol-used;
-  if(lines.length){lines.push([`${dil==='WFI'?'Sterile water':'NSS 0.9%'} ${fmt(Math.max(diluent,0),2)} ml`,`เติมให้ครบ ${vol} ml`]);
-    lines.push([`รวม ${vol} ml · อัตรา ${fmt(vol/24,2)} ml/h SC ต่อเนื่อง 24 ชม.`,'ตั้งเครื่อง syringe pump ตามอัตรานี้']);}
+  let rateTxt='',rateSub='';
+  if(dev==='mlh'){rateTxt=`rate ${fmt(vol/dur,2)} ml/h`;rateSub=`${vol} ml ใน ${dur} ชม.`;}
+  if(dev==='mm24'){rateTxt=`ตั้งเครื่อง ${fmt(len/k,1)} mm/24 ชม.`;rateSub=`ของเหลวยาว ${len} mm หมดใน ${dur} ชม.`;}
+  if(dev==='mmh'){rateTxt=`ตั้งเครื่อง ${fmt(len/dur,2)} mm/ชม.`;rateSub=`ของเหลวยาว ${len} mm หมดใน ${dur} ชม.`;}
+  if(parts.length){
+    lines.unshift([`${parts.join(' + ')} + ${dilName} ให้ครบ ${fmt(vol)} ml SC via syringe driver ${rateTxt} (${dur} ชม.)`,'order สำหรับเขียนในใบสั่งยา']);
+    lines.push([`เติม ${dilName} ${fmt(Math.max(diluent,0),2)} ml`,`ให้ได้ปริมาตรรวม ${fmt(vol)} ml`]);
+    lines.push([rateTxt,rateSub]);}
+  if(dev!=='mlh'){alerts.push(['info','เครื่องแบบ mm: วัดความยาวของเหลวใน syringe ด้วยไม้บรรทัดบนเครื่อง (ไม่รวมหัว syringe) ใช้ยี่ห้อ/ขนาด syringe เดิมทุกครั้ง · MS26 ตั้งเป็น mm/24 ชม. · MS16A ตั้งเป็น mm/ชม.']);
+    if(dev==='mm24'&&Math.abs(len/k-Math.round(len/k))>0.01)alerts.push(['warn','อัตราไม่เป็นเลขจำนวนเต็ม: ถ้าเครื่องตั้งได้เฉพาะจำนวนเต็ม ปรับความยาวของเหลวใหม่ (เช่น 48 mm)']);}
+  if(dur>24)alerts.push(['warn',`ผสมยาไว้ ${dur} ชม.: ตรวจความคงตัว (stability) ของยาแต่ละตัว แนวปฏิบัติส่วนใหญ่ให้เปลี่ยน syringe ทุก 24 ชม.`]);
   steps.push(`ปริมาตรยารวม ${fmt(used,2)} ml · สารเจือจาง ${fmt(diluent,2)} ml`);
   if(diluent<0)alerts.push(['stop',`ยารวม ${fmt(used,1)} ml เกิน ${vol} ml เลือก syringe ใหญ่ขึ้น`]);
   if(count>3)alerts.push(['warn',`ผสม ${count} ตัวใน syringe เดียว: แนวปฏิบัติแนะนำไม่เกิน 3 ตัว ตรวจ compatibility ก่อน`]);
@@ -550,7 +569,7 @@ function renderSD(T,p){
   if(S.sdOp==='fentanyl'&&opDose>0)prn.push(`Fentanyl ${Math.max(5,roundStep(opDose/6,5))} mcg SC q1h PRN`);
   on.forEach(a=>a.prn&&prn.push(a.prn));
   const res={lines,steps,alerts:[]};
-  renderResult($('#sdOut'),'ใบเตรียมยา syringe driver',res,alerts.concat(patientAlerts(p,S.sdOp==='morphine'?'morphine':'')));
+  renderResult($('#sdOut'),'Order และวิธีผสม',res,alerts.concat(patientAlerts(p,S.sdOp==='morphine'?'morphine':'')));
   if(prn.length){$('#sdOut').insertBefore(el('div',{class:'order',style:'background:var(--apricot-soft)'},el('div',{class:'note',style:'color:var(--ink);font-weight:600'},'PRN ที่ควรสั่งคู่กัน'),prn.map(t=>el('div',{class:'line',style:'font-size:1rem'},t))),$('#sdOut').querySelector('details'));}
 }
 
@@ -579,13 +598,24 @@ TABS.forEach(([k,l,ic])=>{const b=el('button',{role:'tab','data-k':k,'aria-selec
 function update(){
   const p=pt(),T=totals();
   const sedTxt=$('#sed').selectedOptions[0].textContent.split('·')[1].trim();
-  $('#ptSum').textContent=`อายุ ${p.age} · eGFR ${p.egfr??'-'} · RR ${p.rr} · ${sedTxt}${p.liver?' · ตับบกพร่อง':''}`;
+  const v=x=>$(x).value===''?'-':$(x).value;
+  $('#ptSum').textContent=`อายุ ${v('#age')} · eGFR ${v('#egfr')} · RR ${v('#rr')} · ${sedTxt}${p.liver?' · ตับบกพร่อง':''} · ยา ${S.rows.length} รายการ`;
   document.querySelectorAll('#rows .row').forEach((rw,i)=>{const c=rowCalc(S.rows[i]);const o=rw.querySelectorAll('.f')[3];if(o)o.lastChild.textContent=fmt(c.ome);});
   renderMedsSummary(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
 }
 $('#addRow').addEventListener('click',()=>{S.rows.push({drug:'mosyr',qty:2.5,freq:1,prn:true});renderRows();update();});
-['#age','#egfr','#rr','#sed','#liver','#pain','#sdVol','#sdDil'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
+['#age','#egfr','#rr','#sed','#liver','#pain','#sdVol','#sdDil','#sdDev','#sdDur','#sdLen'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
 renderRows(); update();
+// clear patient (tap twice to confirm)
+let clrT=null;
+$('#clearBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const b=e.currentTarget;
+  if(!clrT){b.textContent='กดอีกครั้งเพื่อล้าง';clrT=setTimeout(()=>{b.textContent='ล้างข้อมูล';clrT=null;},3000);return;}
+  clearTimeout(clrT);clrT=null;b.textContent='ล้างแล้ว';setTimeout(()=>b.textContent='ล้างข้อมูล',1500);
+  ['#age','#egfr','#rr'].forEach(x=>$(x).value='');$('#sed').value='1';$('#liver').checked=false;$('#pain').value=0;
+  S.rows=[];S.sdOpDose=null;S.target='mst';S.red='auto';S.sdOp='morphine';
+  ADD.forEach(a=>S.addons[a.k]={on:a.k==='mida'||a.k==='halo',dose:a.def,conc:a.conc});
+  const ab=$('#addons');ab.innerHTML='';delete ab.dataset.built;
+  $('#ptCard').open=true;renderRows();update();showTab('meds');});
 // theme toggle + stars
 const THEMES=[['system','ตามเครื่อง'],['light','กลางวัน'],['dark','คืนจันทร์']];
 let th='system'; try{th=localStorage.getItem('pd_theme')||'system'}catch(e){}
