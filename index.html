@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3f8f74">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>PalliDose นครไทย</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600&display=swap">
+<style>
+/* Layout: one calm column (max 760px) with a fixed bottom tab bar like a phone app; patient card shared across all tabs */
+:root{
+  --bg:#f3f7f4; --card:#ffffff; --ink:#1f3a33; --muted:#5d7770; --line:#d9e6df;
+  --sage:#3f8f74; --sage-soft:#e2f1ea; --apricot:#f08a5d; --apricot-soft:#fde9df;
+  --warn:#b86e00; --warn-soft:#fff3d6; --stop:#c23b3b; --stop-soft:#fde4e4; --ok:#2f7d5b;
+  --shadow:0 2px 10px rgba(31,58,51,.07);
+  --on-accent:#ffffff; --bg-grad:none; --glow-strong:none; --glow-soft:none; --sky-display:none; --blur:none; --hdr-pad:0px;
+  --f-display:"Mali","IBM Plex Sans Thai Looped",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai Looped","Noto Sans Thai",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1230; --card:rgba(21,29,68,.84); --ink:#f6efd6; --muted:#c0c3df; --line:#2e3a74;
+  --sage:#f4cf62; --sage-soft:rgba(244,207,98,.15); --apricot:#ffa27c; --apricot-soft:rgba(255,162,124,.17);
+  --warn:#f6c45a; --warn-soft:rgba(246,196,90,.13); --stop:#ff8f8f; --stop-soft:rgba(255,143,143,.14); --ok:#8fe0b9;
+  --on-accent:#1a1f45; --bg-grad:radial-gradient(120% 70% at 85% 0%,#26306b 0%,#111a45 40%,#070b22 100%);
+  --glow-strong:0 0 14px rgba(255,214,102,.55),0 0 3px rgba(255,232,160,.55); --glow-soft:0 0 8px rgba(255,220,130,.3);
+  --sky-display:block; --blur:blur(8px); --hdr-pad:70px;
+  --shadow:0 4px 24px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1230; --card:rgba(21,29,68,.84); --ink:#f6efd6; --muted:#c0c3df; --line:#2e3a74;
+  --sage:#f4cf62; --sage-soft:rgba(244,207,98,.15); --apricot:#ffa27c; --apricot-soft:rgba(255,162,124,.17);
+  --warn:#f6c45a; --warn-soft:rgba(246,196,90,.13); --stop:#ff8f8f; --stop-soft:rgba(255,143,143,.14); --ok:#8fe0b9;
+  --on-accent:#1a1f45; --bg-grad:radial-gradient(120% 70% at 85% 0%,#26306b 0%,#111a45 40%,#070b22 100%);
+  --glow-strong:0 0 14px rgba(255,214,102,.55),0 0 3px rgba(255,232,160,.55); --glow-soft:0 0 8px rgba(255,220,130,.3);
+  --sky-display:block; --blur:blur(8px);
+  --shadow:0 4px 24px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);background-image:var(--bg-grad);background-attachment:fixed;min-height:100%;color:var(--ink);text-shadow:var(--glow-soft);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding-block:14px}
+header.top{display:flex;align-items:center;gap:12px;padding-right:var(--hdr-pad)}
+header.top>div:nth-child(2){flex:1;min-width:0}
+.logo{color:var(--on-accent);width:46px;height:46px;border-radius:16px;background:var(--sage);display:grid;place-items:center;flex:none}
+.logo svg{width:28px;height:28px}
+h1,h2,h3,.ome .big,.order .line{text-shadow:var(--glow-strong)}
+input,select,button,.pill{text-shadow:none}
+h1{font-family:var(--f-display);font-size:1.5rem;margin:0;line-height:1.2}
+.sub{color:var(--muted);font-size:.85rem;margin:0}
+h2{font-family:var(--f-display);font-size:1.2rem;margin:0 0 4px}
+h3{font-family:var(--f-display);font-size:1.02rem;margin:0}
+.card{-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);font-weight:500;min-width:0}
+input,select{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-height:46px}
+input:focus,select:focus,button:focus-visible{outline:3px solid color-mix(in srgb,var(--sage) 45%,transparent);outline-offset:1px;border-color:var(--sage)}
+button{font:inherit;cursor:pointer;border:none;border-radius:14px;min-height:46px;padding:10px 16px;font-weight:600}
+.btn{background:var(--sage);color:var(--on-accent)}
+.btn.ghost{background:var(--sage-soft);color:var(--ink)}
+.btn.small{min-height:38px;padding:6px 12px;font-size:.9rem}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{background:var(--bg);color:var(--ink);border:1.5px solid var(--line);font-weight:500;min-height:42px;padding:6px 12px}
+.seg button[aria-pressed="true"]{background:var(--sage);color:var(--on-accent);border-color:var(--sage)}
+.row{display:grid;grid-template-columns:1fr 84px 84px 40px;gap:8px;align-items:end;padding:10px;border-radius:14px;background:var(--bg)}
+.row .full{grid-column:1/-1}
+.row .del{background:transparent;color:var(--muted);min-height:46px;padding:0;font-size:1.3rem}
+.typechip{display:flex;gap:6px;grid-column:1/-1}
+.typechip button{min-height:34px;padding:4px 12px;font-size:.85rem;background:var(--card);border:1.5px solid var(--line);color:var(--ink);font-weight:500}
+.typechip button[aria-pressed="true"]{background:var(--apricot-soft);border-color:var(--apricot)}
+.ome{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ome .big{font-family:var(--f-display);font-size:2.3rem;font-weight:700;color:var(--sage);font-variant-numeric:tabular-nums;line-height:1}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 10px;font-size:.8rem;font-weight:600}
+.pill.naive{background:var(--apricot-soft);color:var(--ink)}
+.pill.tol{background:var(--sage-soft);color:var(--ink)}
+.breakdown{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.order{background:var(--sage-soft);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.order .line{font-family:var(--f-display);font-size:1.12rem;font-weight:600;word-break:break-word}
+.order .line small{font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.85rem;display:block}
+.steps{margin:0;padding-left:20px;font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.alert{border-radius:14px;padding:10px 12px;font-size:.9rem;display:flex;gap:8px;align-items:flex-start}
+.alert b{flex:none}
+.alert.warn{background:var(--warn-soft);color:var(--ink);border-left:4px solid var(--warn)}
+.alert.stop{background:var(--stop-soft);color:var(--ink);border-left:4px solid var(--stop)}
+.alert.info{background:var(--sage-soft);color:var(--ink);border-left:4px solid var(--sage)}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.addon{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:12px;border-radius:14px;background:var(--bg);align-items:start}
+.addon input[type=checkbox]{width:24px;height:24px;min-height:0;accent-color:var(--sage);margin-top:3px}
+.addon .body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.addon .body .grid{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}
+.note{font-size:.82rem;color:var(--muted)}
+table.t{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+table.t th,table.t td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+table.t th{color:var(--muted);font-weight:500}
+.tw{overflow-x:auto}
+nav.tabs{-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;
+  padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));z-index:20}
+nav.tabs .in{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:100%;max-width:760px}
+nav.tabs button{background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.72rem;font-weight:500;padding:6px 2px;min-height:56px;border-radius:14px}
+nav.tabs button svg{width:24px;height:24px}
+nav.tabs button[aria-selected="true"]{color:var(--sage);background:var(--sage-soft);font-weight:600}
+.disclaimer{font-size:.78rem;color:var(--muted);text-align:center}
+details.pt summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px}
+details.pt summary::-webkit-details-marker{display:none}
+.ptsum{font-size:.85rem;color:var(--muted)}
+.chev{transition:transform .2s}
+details[open] .chev{transform:rotate(180deg)}
+/* moonlit night sky (dark theme only) */
+.sky{display:var(--sky-display);position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.moon{position:absolute;top:calc(18px + env(safe-area-inset-top,0px));right:max(18px,env(safe-area-inset-right,0px));width:62px;height:62px;border-radius:50%;
+  background:radial-gradient(circle at 36% 34%,#fffbe8 0%,#f9e7a0 45%,#e9c763 100%);
+  box-shadow:0 0 36px 10px rgba(255,221,120,.38),0 0 120px 46px rgba(255,214,102,.14)}
+.moon::before,.moon::after{content:"";position:absolute;border-radius:50%;background:rgba(206,170,70,.35)}
+.moon::before{width:13px;height:13px;top:15px;left:32px}
+.moon::after{width:8px;height:8px;top:37px;left:17px;box-shadow:24px 6px 0 -2px rgba(206,170,70,.3)}
+.star{position:absolute;border-radius:50%;background:#fff6cf;box-shadow:0 0 6px rgba(255,240,180,.8);animation:tw 3.6s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.25}50%{opacity:1}}
+.bat{position:absolute;width:46px;color:#05081c;filter:drop-shadow(0 0 5px rgba(255,214,102,.45));animation:fly 34s linear infinite}
+.bat svg{display:block;width:100%;animation:flap .45s ease-in-out infinite alternate;transform-origin:50% 40%}
+.bat.b2{width:30px;animation-duration:46s;animation-delay:-18s}
+.bat.b3{width:22px;animation-duration:58s;animation-delay:-36s}
+@keyframes fly{0%{transform:translate(-12vw,22vh)}25%{transform:translate(25vw,12vh)}50%{transform:translate(55vw,26vh)}75%{transform:translate(85vw,9vh)}100%{transform:translate(112vw,18vh)}}
+@keyframes flap{from{transform:scaleY(1)}to{transform:scaleY(.55)}}
+.themebtn{background:var(--sage-soft);color:var(--ink);display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;border-radius:999px;flex:none}
+.themebtn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.themebtn svg{width:18px;height:18px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.star,.bat,.bat svg{animation:none!important}.bat{transform:translate(60vw,14vh)}}
+@media (min-width:700px){.ome .big{font-size:2.8rem}}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"><div class="moon"></div><div id="stars"></div><div class="bat"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div><div class="bat b2"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div><div class="bat b3"><svg viewBox="0 0 64 30" fill="currentColor"><path d="M32 7c-1.2 0-2 .9-2.4 2l-1-3-1.4 4.2C24 9 20.6 6.6 18.6 2.4 17 7.4 12.2 9.8 6.6 9 9 11.6 10.6 15 10.4 19c3.6-2.4 8.2-2.6 11.4-.2 1.6-2.6 4.8-4.1 7.4-3.6L32 28l2.8-12.8c2.6-.5 5.8 1 7.4 3.6 3.2-2.4 7.8-2.2 11.4.2-.2-4 1.4-7.4 3.8-10-5.6.8-10.4-1.6-12-6.6-2 4.2-5.4 6.6-8.6 7.8L35.4 6l-1 3C34 7.9 33.2 7 32 7z"/></svg></div></div>
+<div class="wrap">
+  <header class="top">
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/><path d="M9 12h6M12 9v6"/></svg></div>
+    <div><h1>PalliDose นครไทย</h1><p class="sub">คำนวณ opioid และ syringe driver สำหรับผู้ป่วยประคับประคอง</p></div>
+    <button class="themebtn" id="themeBtn" aria-label="เปลี่ยนธีม"></button>
+  </header>
+
+  <details class="card pt" id="ptCard" open>
+    <summary><div><h2>ข้อมูลผู้ป่วย</h2><div class="ptsum" id="ptSum"></div></div><svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div class="grid" style="margin-top:12px">
+      <label class="f">อายุ (ปี)<input id="age" type="number" inputmode="numeric" min="18" max="120" value="68"></label>
+      <label class="f">eGFR (mL/min)<input id="egfr" type="number" inputmode="numeric" min="0" max="150" value="55"></label>
+      <label class="f">อัตราหายใจ (/min)<input id="rr" type="number" inputmode="numeric" min="0" max="60" value="16"></label>
+      <label class="f">ระดับความง่วง (sedation)
+        <select id="sed">
+          <option value="1">1 · ตื่นดี</option>
+          <option value="2">2 · ง่วงเล็กน้อย ปลุกตื่นง่าย</option>
+          <option value="3">3 · ง่วงมาก หลับขณะคุย</option>
+          <option value="4">4 · ปลุกไม่ค่อยตื่น</option>
+        </select></label>
+    </div>
+    <label class="f" style="flex-direction:row;align-items:center;gap:10px;color:var(--ink)"><input id="liver" type="checkbox" style="width:22px;height:22px;min-height:0;accent-color:var(--sage)"> ตับบกพร่องรุนแรง / cirrhosis</label>
+  </details>
+
+  <!-- TAB 1: current meds -->
+  <section id="tab-meds" class="tab" role="tabpanel">
+    <div class="card">
+      <div><h2>ยา opioid ที่ใช้อยู่</h2><p class="note">ใส่ยาที่ได้รับใน 24 ชม.ที่ผ่านมา รวม PRN ที่ใช้จริง (ข้อมูลตัวอย่าง แก้ได้เลย)</p></div>
+      <div id="rows" style="display:flex;flex-direction:column;gap:10px"></div>
+      <button class="btn ghost" id="addRow">+ เพิ่มยา</button>
+    </div>
+    <div class="card">
+      <h3>รวมเป็น oral morphine ต่อวัน (OME)</h3>
+      <div class="ome"><span class="big" id="omeBig">0</span><span>mg/วัน</span><span id="omePill"></span></div>
+      <div class="breakdown" id="omeBreak"></div>
+      <div class="alerts" id="medAlerts"></div>
+    </div>
+  </section>
+
+  <!-- TAB 2: convert -->
+  <section id="tab-conv" class="tab" role="tabpanel" hidden>
+    <div class="card">
+      <div><h2>แปลงยา (convert)</h2><p class="note">ใช้ OME จากหน้า "ยาเดิม" = <b id="cvOme">0</b> mg/วัน</p></div>
+      <div><div class="note" style="margin-bottom:6px">เปลี่ยนเป็น</div><div class="seg" id="cvTarget"></div></div>
+      <div><div class="note" style="margin-bottom:6px">ลดโดสจาก incomplete cross-tolerance</div><div class="seg" id="cvRed"></div></div>
+    </div>
+    <div class="card" id="cvOut"></div>
+  </section>
+
+  <!-- TAB 3: titrate -->
+  <section id="tab-tit" class="tab" role="tabpanel" hidden>
+    <div class="card">
+      <div><h2>ปรับโดส (titrate)</h2><p class="note">ใช้ยาเดิมจากหน้าแรก: โดสประจำ <b id="tiSch">0</b> mg + PRN <b id="tiPrn">0</b> mg OME</p></div>
+      <label class="f">Pain score ตอนนี้ (0–10)<input id="pain" type="range" min="0" max="10" value="6" style="padding:0;min-height:36px;accent-color:var(--apricot)"></label>
+      <div class="ome"><span class="big" id="painBig" style="color:var(--apricot)">6</span><span id="painTxt"></span></div>
+      <div><div class="note" style="margin-bottom:6px">ให้ยาประจำในรูป</div><div class="seg" id="tiForm"></div></div>
+    </div>
+    <div class="card" id="tiOut"></div>
+  </section>
+
+  <!-- TAB 4: syringe driver -->
+  <section id="tab-sd" class="tab" role="tabpanel" hidden>
+    <div class="card">
+      <div><h2>Syringe driver 24 ชม.</h2><p class="note">ผสมยาให้ SC ต่อเนื่อง คำนวณปริมาตรและอัตรา mL/h</p></div>
+      <div class="grid">
+        <label class="f">ปริมาตรรวมใน syringe
+          <select id="sdVol"><option value="12">12 ml (0.5 ml/h)</option><option value="24" selected>24 ml (1 ml/h)</option><option value="48">48 ml (2 ml/h)</option></select></label>
+        <label class="f">สารเจือจาง
+          <select id="sdDil"><option value="WFI">Sterile water (WFI)</option><option value="NSS">NSS 0.9%</option></select></label>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Opioid</h3>
+      <div class="seg" id="sdOp"></div>
+      <div class="grid" id="sdOpFields"></div>
+      <div class="note" id="sdOpNote"></div>
+    </div>
+    <div class="card">
+      <h3>ยาอาการอื่น</h3>
+      <div id="addons" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+    <div class="card" id="sdOut"></div>
+  </section>
+
+  <!-- TAB 5: info -->
+  <section id="tab-info" class="tab" role="tabpanel" hidden>
+    <div class="card">
+      <h2>ตั้งค่า</h2>
+      <div><div class="note" style="margin-bottom:6px">อัตราส่วน morphine กิน : ฉีด (SC/IV)</div><div class="seg" id="ratioSeg"></div>
+      <p class="note">ค่าเริ่มต้น 3:1 (NCCN) ได้โดสฉีดต่ำกว่า ปลอดภัยกว่า · 2:1 ตามแนวปฏิบัติ palliative UK/EAPC</p></div>
+    </div>
+    <div class="card">
+      <h2>ค่าแปลงที่แอพใช้</h2>
+      <div class="tw"><table class="t" id="convTable"></table></div>
+      <p class="note">Fentanyl patch → OME ใช้ 2.4 × mcg/h (CDC 2022) · OME → patch ใช้ตารางฉลากยา (60–134 mg = 25 mcg/h, 135–224 = 50, 225–314 = 75, 315–404 = 100)</p>
+    </div>
+    <div class="card">
+      <h2>แหล่งอ้างอิง</h2>
+      <ul class="note" style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px">
+        <li><a href="https://www.who.int/publications/i/item/9789241550390" target="_blank" rel="noopener">WHO cancer pain guidelines (2018)</a></li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/40639401/" target="_blank" rel="noopener">NCCN Adult Cancer Pain v2.2025</a></li>
+        <li><a href="https://esmo.org/guidelines/supportive-and-palliative-care/cancer-pain" target="_blank" rel="noopener">ESMO cancer pain (2018)</a> · <a href="https://www.pubmed.gov/22300860/" target="_blank" rel="noopener">EAPC (2012)</a></li>
+        <li><a href="https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm" target="_blank" rel="noopener">CDC opioid guideline (2022)</a></li>
+        <li><a href="https://www.nice.org.uk/guidance/cg140/resources/palliative-care-for-adults-strong-opioids-for-pain-relief-35109564116677" target="_blank" rel="noopener">NICE CG140</a></li>
+        <li>ยา syringe driver: Palliative Care Formulary, The Syringe Driver (Dickman &amp; Schneider)</li>
+      </ul>
+    </div>
+    <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
+  </section>
+
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.2</p>
+</div>
+
+<nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const el=(t,a={},...c)=>{const e=document.createElement(t);for(const k in a){if(k==='class')e.className=a[k];else if(k.startsWith('on'))e.addEventListener(k.slice(2),a[k]);else if(a[k]!==false&&a[k]!=null)e.setAttribute(k,a[k]===true?'':a[k]);}c.flat().forEach(x=>x!=null&&e.append(x.nodeType?x:document.createTextNode(x)));return e;};
+const fmt=(n,d=1)=>{if(!isFinite(n))return '0';const r=Math.round(n*Math.pow(10,d))/Math.pow(10,d);return r.toLocaleString('en-US',{maximumFractionDigits:d});};
+
+const S={ratio:3, rows:[
+  {drug:'mst30',qty:1,freq:2,prn:false},
+  {drug:'mosyr',qty:3,freq:3,prn:true}
+], target:'mst', red:'auto', tiForm:'mst', sdOp:'morphine', sdOpDose:null, addons:{}};
+try{const r=localStorage.getItem('pd_ratio'); if(r) S.ratio=+r;}catch(e){}
+
+// ---------- formulary ----------
+const D={
+  tramadol:{n:'Tramadol 50 mg cap',u:'cap',per:50,cls:'tramadol',route:'po'},
+  mst10:{n:'MST 10 mg (SR)',u:'tab',per:10,cls:'morphine',route:'po'},
+  mst30:{n:'MST 30 mg (SR)',u:'tab',per:30,cls:'morphine',route:'po'},
+  kap20:{n:'Kapanol 20 mg (SR)',u:'cap',per:20,cls:'morphine',route:'po'},
+  moir:{n:'Mo IR 10 mg tab',u:'tab',per:10,cls:'morphine',route:'po'},
+  mosyr:{n:'Mo syr 2 mg/ml',u:'ml',per:2,cls:'morphine',route:'po'},
+  moinj:{n:'Morphine ฉีด IV/SC',u:'mg',per:1,cls:'morphine',route:'inj'},
+  fentinj:{n:'Fentanyl ฉีด IV/SC',u:'mcg',per:1,cls:'fentanyl',route:'inj'},
+  pethinj:{n:'Pethidine IV',u:'mg',per:1,cls:'pethidine',route:'inj'},
+  patch:{n:'Fentanyl patch 25 mcg/h',u:'แผ่น',per:25,cls:'fentanyl',route:'td'}
+};
+function toOME(key,dailyAmt){ // dailyAmt in drug units of mg/mcg (already × per)
+  const r=S.ratio;
+  switch(key){
+    case 'tramadol': return dailyAmt/10;
+    case 'moinj': return dailyAmt*r;
+    case 'fentinj': return dailyAmt/10*r;      // 100 mcg IV fentanyl ≈ 10 mg IV morphine
+    case 'pethinj': return dailyAmt/7.5*r;     // 75 mg IV pethidine ≈ 10 mg IV morphine
+    case 'patch': return dailyAmt*2.4;         // dailyAmt = mcg/h
+    default: return dailyAmt;
+  }
+}
+function rowCalc(r){const d=D[r.drug];const q=+r.qty||0;const f=r.drug==='patch'?1:(+r.freq||0);const amt=q*d.per*f;return {amt,ome:toOME(r.drug,amt),d,f};}
+
+function totals(){
+  let sch=0,prn=0,classes=new Set(),tram=0,hasPatch=false,hasPeth=false;
+  S.rows.forEach(r=>{const c=rowCalc(r); if(c.ome<=0)return; if(r.prn)prn+=c.ome; else sch+=c.ome; classes.add(c.d.cls); if(r.drug==='tramadol')tram+=c.amt; if(r.drug==='patch')hasPatch=true; if(r.drug==='pethinj')hasPeth=true;});
+  return {sch,prn,total:sch+prn,classes,tram,hasPatch,hasPeth};
+}
+function pt(){return {age:+$('#age').value||0,egfr:$('#egfr').value===''?null:+$('#egfr').value,rr:+$('#rr').value||0,sed:+$('#sed').value,liver:$('#liver').checked};}
+function frail(p){return p.age>=75||(p.egfr!=null&&p.egfr<30)||p.sed>=3||p.liver;}
+
+// rounding to available step: prefer nearest, never round up by > 10%
+function roundStep(x,step){ if(x<=0)return 0; const lo=Math.floor(x/step+1e-9)*step, hi=Math.ceil(x/step-1e-9)*step; if(hi<=x*1.1)return hi; return lo; }
+
+// ---------- patient summary & safety ----------
+function patientAlerts(p,ctx){
+  const a=[];
+  if(p.sed>=3||(p.rr>0&&p.rr<10)) a.push(['stop','ง่วงมาก/หายใจช้า: ห้ามเพิ่มโดส opioid ประเมินผู้ป่วยทันที พิจารณาลดโดสหรือ naloxone ตามแนวทาง รพ.']);
+  if(p.egfr!=null&&p.egfr<30&&ctx==='morphine') a.push(['stop','eGFR < 30: เลี่ยง morphine (metabolite สะสม) แนะนำ fentanyl แทน']);
+  else if(p.egfr!=null&&p.egfr<60&&ctx==='morphine') a.push(['warn','eGFR 30–60: ใช้ morphine ได้ด้วยความระวัง ลดโดส/ยืดเวลา และเฝ้าระวังง่วง ซึม myoclonus']);
+  if(p.liver&&ctx==='morphine') a.push(['warn','ตับบกพร่องรุนแรง: เริ่มโดสต่ำ ยืดช่วงเวลา เลี่ยง SR ในช่วงปรับยา']);
+  if(p.age>=75) a.push(['info','อายุ ≥ 75 ปี: เริ่มต่ำกว่าปกติ 25–50% และปรับช้ากว่า']);
+  return a;
+}
+function renderAlerts(box,list){box.innerHTML='';list.forEach(([k,t])=>box.append(el('div',{class:'alert '+k},el('b',{},k==='stop'?'⛔':k==='warn'?'⚠':'ℹ'),el('span',{},t))));}
+
+// ---------- TAB 1 ----------
+function renderRows(){
+  const box=$('#rows'); box.innerHTML='';
+  S.rows.forEach((r,i)=>{
+    const d=D[r.drug];
+    const sel=el('select',{id:'drug'+i,'aria-label':'ยา'},Object.entries(D).map(([k,v])=>el('option',{value:k,selected:k===r.drug},v.n)));
+    sel.addEventListener('change',()=>{r.drug=sel.value; if(sel.value==='patch'){r.qty=1;r.prn=false;} renderRows(); update();});
+    const qty=el('input',{id:'qty'+i,type:'number',inputmode:'decimal',min:0,step:'any',value:r.qty});
+    qty.addEventListener('input',()=>{r.qty=qty.value;update();});
+    const freq=el('input',{id:'freq'+i,type:'number',inputmode:'numeric',min:0,step:1,value:r.freq,disabled:r.drug==='patch'});
+    freq.addEventListener('input',()=>{r.freq=freq.value;update();});
+    const del=el('button',{class:'del','aria-label':'ลบยา',onclick:()=>{S.rows.splice(i,1);renderRows();update();}},'×');
+    const chip=el('div',{class:'typechip'},
+      el('button',{'aria-pressed':String(!r.prn),onclick:()=>{r.prn=false;renderRows();update();}},'ให้ประจำ'),
+      r.drug==='patch'?null:el('button',{'aria-pressed':String(r.prn),onclick:()=>{r.prn=true;renderRows();update();}},'PRN ที่ใช้จริง'));
+    const c=rowCalc(r);
+    const qlabel=r.drug==='patch'?'จำนวนแผ่น':(d.u==='mg'||d.u==='mcg'?d.u+'/ครั้ง':d.u+'/ครั้ง');
+    box.append(el('div',{class:'row'},
+      el('label',{class:'f full'},'ยา',sel),
+      el('label',{class:'f'},qlabel,qty),
+      el('label',{class:'f'},r.drug==='patch'?'—':'ครั้ง/วัน',freq),
+      el('div',{class:'f'},'OME',el('div',{style:'font-weight:600;color:var(--ink);padding:10px 0;font-variant-numeric:tabular-nums'},fmt(c.ome))),
+      del, chip));
+  });
+}
+function renderMedsSummary(T,p){
+  $('#omeBig').textContent=fmt(T.total);
+  const tol=T.total>=60;
+  $('#omePill').innerHTML='';
+  $('#omePill').append(el('span',{class:'pill '+(tol?'tol':'naive')},tol?'opioid-tolerant (≥ 60 mg)':'ยังไม่ tolerant (< 60 mg)'));
+  $('#omeBreak').textContent=`โดสประจำ ${fmt(T.sch)} mg + PRN ที่ใช้ ${fmt(T.prn)} mg`;
+  const a=[];
+  if(T.tram>400) a.push(['warn',`Tramadol ${fmt(T.tram,0)} mg/วัน เกินขนาดสูงสุด 400 mg/วัน`]);
+  if(T.tram>0&&T.classes.size>1) a.push(['warn','ใช้ tramadol ร่วมกับ strong opioid: พิจารณาหยุด tramadol']);
+  if(T.hasPeth) a.push(['warn','Pethidine ไม่แนะนำใน palliative (norpethidine สะสม ทำให้ชัก) แอพใช้เป็นยาต้นทางเพื่อแปลงเท่านั้น']);
+  renderAlerts($('#medAlerts'),a.concat(patientAlerts(p,T.classes.has('morphine')?'morphine':'')));
+}
+
+// ---------- conversion engine ----------
+const TARGETS=[['mst','MST q12h'],['kap','Kapanol q12h'],['syr','Mo syr q4h'],['mocsci','Morphine SC 24 ชม.'],['fentcsci','Fentanyl SC 24 ชม.'],['patch','Fentanyl patch']];
+const TCLS={mst:'morphine',kap:'morphine',syr:'morphine',mocsci:'morphine',fentcsci:'fentanyl',patch:'fentanyl'};
+function autoRed(T,target,p){
+  if(target==='patch')return 0;
+  const tc=TCLS[target];
+  const others=[...T.classes].filter(c=>c!==tc&&c!=='tramadol');
+  if(others.length===0)return 0; // same drug (route change) or tramadol step-up
+  return frail(p)?50:25;
+}
+function patchFromOME(o){ if(o<60)return 0; if(o<135)return 25; if(o<225)return 50; if(o<315)return 75; if(o<405)return 100; return 100+Math.floor((o-405)/90+1)*25; }
+function syrPRN(omeDaily,frac){let mg=roundStep(omeDaily*frac,1); if(mg<2)mg=2; return {mg,ml:mg/2};}
+function mstTabs(dose){const n30=Math.floor(dose/30), n10=Math.round((dose-n30*30)/10); const p=[]; if(n30)p.push(`MST 30 mg ${n30} tab`); if(n10)p.push(`MST 10 mg ${n10} tab`); return p.join(' + ');}
+
+function convert(ome,target,red,p){
+  const out={lines:[],steps:[],alerts:[],achieved:0};
+  const eff=ome*(1-red/100);
+  out.steps.push(`OME รวม ${fmt(ome)} mg/วัน`);
+  if(red) out.steps.push(`ลด cross-tolerance ${red}% → ${fmt(eff)} mg OME/วัน`);
+  const r=S.ratio;
+  if(ome<=0){out.alerts.push(['info','ยังไม่มียาเดิม ใส่ยาในหน้า "ยาเดิม" ก่อน หรือใช้หน้า "ปรับโดส" เพื่อเริ่มยาใหม่']);return out;}
+  if(target==='mst'||target==='kap'){
+    const step=target==='mst'?10:20, half=eff/2, dose=roundStep(half,step);
+    out.steps.push(`÷ 2 = ${fmt(half)} mg ต่อมื้อ → ปัดเป็น ${dose} mg (${target==='mst'?'ทีละ 10':'ทีละ 20'} mg)`);
+    if(dose<=0){out.alerts.push(['warn',`โดสต่ำกว่าเม็ดเล็กสุด (${step} mg q12h) แนะนำ Mo syr q4h แทน`]); return out;}
+    out.achieved=dose*2;
+    out.lines.push([target==='mst'?`${mstTabs(dose)} PO q12h`:`Kapanol 20 mg ${dose/20} cap PO q12h`, `= ${dose*2} mg/วัน · ห้ามหัก/บด${target==='kap'?' (แกะแคปซูลโรยอาหารอ่อนได้)':''}`]);
+    const pr=syrPRN(out.achieved,1/6); out.lines.push([`Mo syr 2 mg/ml ${fmt(pr.ml)} ml (${pr.mg} mg) PO q1h PRN`,'breakthrough ≈ 1/6 ของโดสต่อวัน']);
+  }
+  if(target==='syr'){
+    const each=roundStep(eff/6,eff/6<5?0.5:1); out.steps.push(`÷ 6 = ${fmt(eff/6)} mg ต่อครั้ง → ปัดเป็น ${each} mg`);
+    if(each<=0){out.alerts.push(['warn','โดสต่ำมาก ตรวจข้อมูลอีกครั้ง']);return out;}
+    out.achieved=each*6;
+    out.lines.push([`Mo syr 2 mg/ml ${fmt(each/2,2)} ml (${fmt(each)} mg) PO q4h`,`= ${each*6} mg/วัน · มื้อก่อนนอนเพิ่มเป็น 2 เท่าแทนการปลุกตี 2 ได้`]);
+    out.lines.push([`Mo syr ${fmt(each/2,2)} ml (${fmt(each)} mg) PO q1h PRN`,'breakthrough = โดสเท่ากับ q4h']);
+  }
+  if(target==='mocsci'){
+    const raw=eff/r, d=roundStep(raw,1); out.steps.push(`÷ ${r} (กิน:ฉีด) = ${fmt(raw)} mg → ${d} mg/24 ชม.`);
+    out.achieved=d*r;
+    out.lines.push([`Morphine ${d} mg SC/IV ใน 24 ชม. (syringe driver)`,`Mo 10 mg/ml = ${fmt(d/10,2)} ml · ใช้หน้า Syringe driver เพื่อผสมยาอื่น`]);
+    const pr=Math.max(1,roundStep(d/6,0.5)); out.lines.push([`Morphine ${fmt(pr)} mg SC q1h PRN`,'1/6 ของโดส 24 ชม.']);
+  }
+  if(target==='fentcsci'){
+    const raw=eff/r*10, d=roundStep(raw,5); out.steps.push(`÷ ${r} = morphine ฉีด ${fmt(eff/r)} mg × 10 = fentanyl ${fmt(raw)} mcg → ${d} mcg/24 ชม.`);
+    out.achieved=d/10*r;
+    out.lines.push([`Fentanyl ${d} mcg SC/IV ใน 24 ชม. (syringe driver)`,`Fentanyl 50 mcg/ml = ${fmt(d/50,2)} ml`]);
+    const pr=Math.max(5,roundStep(d/6,5)); out.lines.push([`Fentanyl ${pr} mcg SC q1h PRN`,'1/6 ของโดส 24 ชม. · ฤทธิ์สั้น อาจต้องให้บ่อย']);
+  }
+  if(target==='patch'){
+    const m=patchFromOME(ome); out.steps.push(`เทียบตารางฉลากยา: OME ${fmt(ome)} mg → ${m||'ไม่ถึงเกณฑ์'}${m?' mcg/h':''} (ตารางนี้ conservative แล้ว ไม่ลดซ้ำ)`);
+    if(!m){out.alerts.push(['stop','OME < 60 mg/วัน: ยังไม่ควรใช้ fentanyl patch (แผ่นเล็กสุด 25 mcg/h ≈ 60 mg) ใช้ MST/Kapanol ต่อ']);return out;}
+    out.achieved=m*2.4;
+    out.lines.push([`Fentanyl patch 25 mcg/h ${m/25} แผ่น เปลี่ยนทุก 72 ชม.`,`= ${m} mcg/h`]);
+    const pr=syrPRN(m*2.4,0.1); out.lines.push([`Mo syr 2 mg/ml ${fmt(pr.ml)} ml (${pr.mg} mg) PO q1h PRN`,'≈ 10% ของ OME เทียบเท่า']);
+    out.alerts.push(['info','ติดแผ่นพร้อม MST มื้อสุดท้าย (หรือคงยาฉีดต่อเนื่องอีก 12 ชม.) แผ่นออกฤทธิ์เต็มที่ใน 12–24 ชม. ปรับโดสได้ไม่เร็วกว่าทุก 72 ชม. หลีกเลี่ยงความร้อนบริเวณแผ่น']);
+  }
+  if(out.achieved){const diff=(out.achieved-eff)/eff*100; out.steps.push(`ได้จริง ≈ ${fmt(out.achieved)} mg OME/วัน (${diff>=0?'+':''}${fmt(diff,0)}% จากค่าคำนวณ)`); if(Math.abs(diff)>20&&target!=='patch')out.alerts.push(['warn','โดสที่ปัดได้ต่างจากค่าคำนวณมากกว่า 20% พิจารณารูปแบบยาอื่น']);}
+  return out;
+}
+
+function renderResult(box,title,res,extraAlerts){
+  box.innerHTML='';
+  box.append(el('h3',{},title));
+  if(res.lines.length){
+    const o=el('div',{class:'order'},res.lines.map(([a,b])=>el('div',{class:'line'},a,el('small',{},b))));
+    box.append(o);
+    const txt=res.lines.map(l=>l[0]).join('\n');
+    const btn=el('button',{class:'btn small'},'คัดลอกคำสั่ง');
+    btn.addEventListener('click',()=>{const done=()=>{btn.textContent='คัดลอกแล้ว';setTimeout(()=>btn.textContent='คัดลอกคำสั่ง',1500)};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>sel(o));}else sel(o);});
+    box.append(el('div',{},btn));
+  }
+  if(res.steps.length) box.append(el('details',{},el('summary',{class:'note',style:'cursor:pointer'},'ดูวิธีคำนวณ'),el('ol',{class:'steps'},res.steps.map(s=>el('li',{},s)))));
+  const al=el('div',{class:'alerts'}); renderAlerts(al,res.alerts.concat(extraAlerts||[])); box.append(al);
+}
+function sel(node){const r=document.createRange();r.selectNodeContents(node);const s=getSelection();s.removeAllRanges();s.addRange(r);}
+
+// ---------- TAB 2 ----------
+function renderConv(T,p){
+  $('#cvOme').textContent=fmt(T.total);
+  const seg=$('#cvTarget'); seg.innerHTML='';
+  TARGETS.forEach(([k,l])=>seg.append(el('button',{'aria-pressed':String(S.target===k),onclick:()=>{S.target=k;update();}},l)));
+  const auto=autoRed(T,S.target,p);
+  const rs=$('#cvRed'); rs.innerHTML='';
+  [['auto',`อัตโนมัติ (${auto}%)`],['0','0%'],['25','25%'],['50','50%']].forEach(([k,l])=>rs.append(el('button',{'aria-pressed':String(S.red===k),onclick:()=>{S.red=k;update();}},l)));
+  const red=S.red==='auto'?auto:+S.red;
+  const res=convert(T.total,S.target,S.target==='patch'?0:red,p);
+  const extra=patientAlerts(p,TCLS[S.target]);
+  if(T.hasPatch&&S.target==='fentcsci') extra.push(['warn','จาก fentanyl patch ไป fentanyl SC: ช่วงท้ายของชีวิตแนะนำคงแผ่นเดิมไว้ และใช้ syringe driver เฉพาะส่วนที่ต้องเพิ่ม (ตาราง OME ของแผ่นกับยาฉีดไม่เท่ากัน อาจได้โดสต่ำไป)']);
+  if(T.hasPatch&&S.target!=='patch'&&S.target!=='fentcsci') extra.push(['warn','เลิก fentanyl patch: ยายังค้างในผิวหนัง ~17 ชม.ขึ้นไป เริ่มยาใหม่ 12 ชม.หลังลอกแผ่น ใช้ PRN ช่วงรอยต่อ']);
+  if(S.red!=='auto'&&+S.red<auto) extra.push(['warn',`เลือกลดน้อยกว่าค่าแนะนำ (${auto}%)`]);
+  if(S.target==='patch'&&T.total>0) extra.push(['info','ใช้ patch เมื่อปวดคงที่แล้วเท่านั้น ไม่ใช้ titrate ปวดเฉียบพลัน']);
+  renderResult($('#cvOut'),'คำสั่งยาที่แนะนำ',res,extra);
+}
+
+// ---------- TAB 3 ----------
+const TIFORMS=[['mst','MST q12h'],['kap','Kapanol q12h'],['syr','Mo syr q4h'],['mocsci','Morphine SC 24 ชม.']];
+function renderTit(T,p){
+  $('#tiSch').textContent=fmt(T.sch); $('#tiPrn').textContent=fmt(T.prn);
+  const pain=+$('#pain').value; $('#painBig').textContent=pain;
+  $('#painTxt').textContent=pain>=7?'ปวดมาก':pain>=4?'ปวดปานกลาง':'ปวดน้อย/คุมได้';
+  const seg=$('#tiForm'); seg.innerHTML='';
+  TIFORMS.forEach(([k,l])=>seg.append(el('button',{'aria-pressed':String(S.tiForm===k),onclick:()=>{S.tiForm=k;update();}},l)));
+  const steps=[],alerts=[];let newOME;
+  const unsafe=p.sed>=3||(p.rr>0&&p.rr<10);
+  const nonMorph=[...T.classes].some(c=>c!=='morphine'&&c!=='tramadol');
+  if(nonMorph) alerts.push(['warn','ยาเดิมมี fentanyl/pethidine: ใช้หน้า "แปลงยา" ก่อน หน้านี้คำนวณแบบ morphine']);
+  if(T.total<=0){
+    newOME=frail(p)||(p.egfr!=null&&p.egfr<60)?15:30;
+    steps.push(`ผู้ป่วย opioid-naïve: เริ่ม ${newOME} mg OME/วัน (${newOME===15?'ผู้สูงอายุ/ไตเสื่อม/เปราะบาง: Mo 2.5 mg q4h':'Mo 5 mg q4h ตาม WHO/NCCN/ESMO'})`);
+  } else if(unsafe){
+    newOME=T.sch*0.75; steps.push(`ง่วงมาก/หายใจช้า → ไม่เพิ่ม พิจารณาลด 25% = ${fmt(newOME)} mg`);
+  } else {
+    const base=T.sch+T.prn; steps.push(`โดสประจำ + PRN ที่ใช้ = ${fmt(base)} mg OME`);
+    let f=1, why='คุมปวดได้ คงโดสรวมเดิม';
+    if(pain>=7){f=1.5;why='pain 7–10: เพิ่ม 50–100% (NCCN) แอพเสนอ 50%';}
+    else if(pain>=4){f=1.25;why='pain 4–6: เพิ่ม 25–50% (NCCN) แอพเสนอ 25%';}
+    const byPain=T.sch*f; newOME=Math.max(base,byPain);
+    steps.push(why+(f>1?` → โดสประจำ × ${f} = ${fmt(byPain)} mg`:''));
+    steps.push(`เลือกค่าที่มากกว่า = ${fmt(newOME)} mg OME/วัน`);
+    if(T.sch>0&&newOME>T.sch*1.5) alerts.push(['warn',`เพิ่มเกิน 50% จากโดสประจำเดิม (${fmt(T.sch)} → ${fmt(newOME)} mg) ตรวจสอบความจำเป็นและเฝ้าระวังใกล้ชิด`]);
+    if(T.tram>0) alerts.push(['info','เปลี่ยนจาก tramadol เป็น morphine: หยุด tramadol เมื่อเริ่ม morphine']);
+  }
+  if(newOME>200) alerts.push(['warn','OME > 200 mg/วัน: ปรึกษาทีม palliative/pain และทบทวนสาเหตุปวด']);
+  const res=convert(newOME,S.tiForm,0,p);
+  res.steps=steps.concat(res.steps.slice(1));
+  if(T.total<=0&&(S.tiForm==='mst'||S.tiForm==='kap')) res.alerts.push(['info','ผู้ป่วยเริ่มยาใหม่: แนะนำเริ่ม Mo syr q4h ก่อน แล้วเปลี่ยนเป็น MST/Kapanol เมื่อโดสคงที่ 24–48 ชม.']);
+  renderResult($('#tiOut'),'โดสใหม่ที่แนะนำ',res,alerts.concat(patientAlerts(p,'morphine')).concat([['info','ประเมินซ้ำ: กิน 60 นาที · SC 30 นาที · IV 15 นาที · ถ้าใช้ PRN > 3–4 ครั้ง/วัน ให้ปรับโดสประจำ']]));
+}
+
+// ---------- TAB 4 ----------
+const ADD=[
+  {k:'mida',n:'Midazolam',use:'กระสับกระส่ายช่วงท้าย, ชัก',def:10,conc:5,rng:'10–30 mg/24 ชม. (ผู้สูงอายุ/ไตเสื่อม 5–10)',prn:'Midazolam 2.5 mg SC q1h PRN',max:60},
+  {k:'halo',n:'Haloperidol',use:'คลื่นไส้ / เพ้อสับสน',def:2.5,conc:5,rng:'คลื่นไส้ 1.5–5 · เพ้อ 2.5–10 mg/24 ชม.',prn:'Haloperidol 0.5–1.5 mg SC PRN',max:10},
+  {k:'busc',n:'Hyoscine butylbromide (Buscopan)',use:'เสมหะคั่ง / ปวดบิดลำไส้อุดตัน',def:60,conc:20,rng:'60–120 mg/24 ชม.',prn:'Buscopan 20 mg SC q1h PRN',max:240},
+  {k:'meto',n:'Metoclopramide',use:'คลื่นไส้จาก gastric stasis',def:30,conc:5,rng:'30–60 mg/24 ชม.',prn:'Metoclopramide 10 mg SC q8h PRN',max:100},
+  {k:'dexa',n:'Dexamethasone',use:'หลายข้อบ่งใช้',def:4,conc:4,rng:'ไม่ผสมใน syringe เดียวกัน',prn:'',max:16,separate:true}
+];
+ADD.forEach(a=>{if(!S.addons[a.k])S.addons[a.k]={on:a.k==='mida'||a.k==='halo',dose:a.def,conc:a.conc};});
+function suggestedOpioid(T,p){
+  if(S.sdOp==='none'||T.total<=0)return null;
+  const tgt=S.sdOp==='morphine'?'mocsci':'fentcsci';
+  const red=autoRed(T,tgt,p);
+  const r=convert(T.total,tgt,red,p);
+  return S.sdOp==='morphine'?r.achieved/S.ratio:r.achieved/S.ratio*10;
+}
+function renderSD(T,p){
+  const seg=$('#sdOp'); seg.innerHTML='';
+  [['morphine','Morphine'],['fentanyl','Fentanyl'],['none','ไม่ใส่ opioid']].forEach(([k,l])=>seg.append(el('button',{'aria-pressed':String(S.sdOp===k),onclick:()=>{S.sdOp=k;S.sdOpDose=null;update();}},l)));
+  const f=$('#sdOpFields'); f.innerHTML=''; $('#sdOpNote').textContent='';
+  const sug=suggestedOpioid(T,p);
+  let opDose=0,opConc=S.sdOp==='fentanyl'?50:10,unit=S.sdOp==='fentanyl'?'mcg':'mg';
+  if(S.sdOp!=='none'){
+    const auto=sug!=null?sug:(S.sdOp==='morphine'?10:100);
+    const curDose=S.sdOpDose==null?auto:S.sdOpDose;
+    const di=el('input',{id:'sdDose',type:'number',inputmode:'decimal',min:0,step:'any',value:curDose});
+    di.addEventListener('change',()=>{S.sdOpDose=+di.value;update();});
+    if(!S['c_'+S.sdOp])S['c_'+S.sdOp]=opConc; opConc=S['c_'+S.sdOp];
+    const ci=el('input',{id:'sdConc',type:'number',inputmode:'decimal',min:0,step:'any',value:opConc});
+    ci.addEventListener('change',()=>{S['c_'+S.sdOp]=+ci.value;update();});
+    f.append(el('label',{class:'f'},`โดส ${unit}/24 ชม.`,di),el('label',{class:'f'},`ความเข้มข้นแอมปูล (${unit}/ml)`,ci));
+    opDose=+curDose||0;
+    $('#sdOpNote').textContent=sug!=null?`คำนวณจากยาเดิม (OME ${fmt(T.total)} mg) ได้ ${fmt(sug)} ${unit} · แก้ได้`:`ไม่มียาเดิม ใช้ค่าเริ่มต้นสำหรับ opioid-naïve`;
+    if(sug!=null&&Math.abs(opDose-sug)>0.01) f.append(el('button',{class:'btn ghost small',onclick:()=>{S.sdOpDose=null;update();}},'ใช้ค่าที่คำนวณ'));
+  }
+  // addons
+  const box=$('#addons'); if(!box.dataset.built){box.dataset.built='1';
+    ADD.forEach(a=>{const st=S.addons[a.k];
+      const cb=el('input',{type:'checkbox',id:'on_'+a.k,checked:st.on}); cb.addEventListener('change',()=>{st.on=cb.checked;update();});
+      const d=el('input',{type:'number',id:'dose_'+a.k,inputmode:'decimal',min:0,step:'any',value:st.dose}); d.addEventListener('input',()=>{st.dose=+d.value;update();});
+      const c=el('input',{type:'number',id:'conc_'+a.k,inputmode:'decimal',min:0,step:'any',value:st.conc}); c.addEventListener('input',()=>{st.conc=+c.value;update();});
+      box.append(el('div',{class:'addon'},cb,el('div',{class:'body'},
+        el('label',{for:'on_'+a.k,style:'cursor:pointer'},el('h3',{},a.n),el('div',{class:'note'},a.use+' · '+a.rng)),
+        a.separate?el('div',{class:'note'},'ให้ SC แยกวันละครั้ง ไม่ผสมกับยาอื่น'):el('div',{class:'grid'},el('label',{class:'f'},'mg/24 ชม.',d),el('label',{class:'f'},'แอมปูล mg/ml',c)))));
+    });}
+  // compute
+  const vol=+$('#sdVol').value, dil=$('#sdDil').value;
+  const lines=[],steps=[],alerts=[];let used=0,count=0;
+  if(S.sdOp!=='none'&&opDose>0){const v=opDose/opConc;used+=v;count++;
+    lines.push([`${S.sdOp==='morphine'?'Morphine':'Fentanyl'} ${fmt(opDose)} ${unit}`,`${fmt(v,2)} ml (${opConc} ${unit}/ml)`]);}
+  const on=ADD.filter(a=>S.addons[a.k].on);
+  on.filter(a=>!a.separate).forEach(a=>{const st=S.addons[a.k];if(!(st.dose>0&&st.conc>0))return;const v=st.dose/st.conc;used+=v;count++;
+    lines.push([`${a.n.split(' (')[0]} ${fmt(st.dose)} mg`,`${fmt(v,2)} ml (${st.conc} mg/ml)`]);
+    if(st.dose>a.max)alerts.push(['warn',`${a.n} ${st.dose} mg/24 ชม. สูงกว่าช่วงที่ใช้ทั่วไป (${a.rng})`]);});
+  const diluent=vol-used;
+  if(lines.length){lines.push([`${dil==='WFI'?'Sterile water':'NSS 0.9%'} ${fmt(Math.max(diluent,0),2)} ml`,`เติมให้ครบ ${vol} ml`]);
+    lines.push([`รวม ${vol} ml · อัตรา ${fmt(vol/24,2)} ml/h SC ต่อเนื่อง 24 ชม.`,'ตั้งเครื่อง syringe pump ตามอัตรานี้']);}
+  steps.push(`ปริมาตรยารวม ${fmt(used,2)} ml · สารเจือจาง ${fmt(diluent,2)} ml`);
+  if(diluent<0)alerts.push(['stop',`ยารวม ${fmt(used,1)} ml เกิน ${vol} ml เลือก syringe ใหญ่ขึ้น`]);
+  if(count>3)alerts.push(['warn',`ผสม ${count} ตัวใน syringe เดียว: แนวปฏิบัติแนะนำไม่เกิน 3 ตัว ตรวจ compatibility ก่อน`]);
+  if(S.addons.meto.on&&S.addons.busc.on)alerts.push(['warn','Metoclopramide กับ Buscopan ฤทธิ์หักล้างกัน ไม่ควรใช้ร่วม']);
+  if(S.addons.meto.on)alerts.push(['info','Metoclopramide: ห้ามใช้ในลำไส้อุดตันสมบูรณ์ · ฉลากยา/EMA จำกัด 30 mg/วัน ใน palliative ใช้ได้ถึง 60 mg ตามดุลยพินิจ เฝ้าระวัง EPS']);
+  if(S.addons.mida.on&&frail(p)&&S.addons.mida.dose>10)alerts.push(['warn','ผู้ป่วยสูงอายุ/ไตเสื่อม: เริ่ม midazolam 5–10 mg/24 ชม.']);
+  if(S.addons.mida.on&&S.sdOp!=='none')alerts.push(['info','Midazolam + opioid: เฝ้าระวังง่วงและการหายใจ']);
+  if(S.addons.dexa.on)alerts.push(['info','Dexamethasone: ให้ SC แยกเข็ม/แยกเวลา ไม่ผสมใน syringe driver']);
+  alerts.push(['info','ตรวจ compatibility ตามตารางของ รพ. ทุกครั้ง สังเกตตะกอน/ขุ่น/เปลี่ยนสี และตรวจผิวหนังบริเวณเข็มทุกวัน']);
+  const prn=[];
+  if(S.sdOp==='morphine'&&opDose>0)prn.push(`Morphine ${fmt(Math.max(1,roundStep(opDose/6,0.5)))} mg SC q1h PRN`);
+  if(S.sdOp==='fentanyl'&&opDose>0)prn.push(`Fentanyl ${Math.max(5,roundStep(opDose/6,5))} mcg SC q1h PRN`);
+  on.forEach(a=>a.prn&&prn.push(a.prn));
+  const res={lines,steps,alerts:[]};
+  renderResult($('#sdOut'),'ใบเตรียมยา syringe driver',res,alerts.concat(patientAlerts(p,S.sdOp==='morphine'?'morphine':'')));
+  if(prn.length){$('#sdOut').insertBefore(el('div',{class:'order',style:'background:var(--apricot-soft)'},el('div',{class:'note',style:'color:var(--ink);font-weight:600'},'PRN ที่ควรสั่งคู่กัน'),prn.map(t=>el('div',{class:'line',style:'font-size:1rem'},t))),$('#sdOut').querySelector('details'));}
+}
+
+// ---------- TAB 5 ----------
+function renderInfo(){
+  const s=$('#ratioSeg'); s.innerHTML='';
+  [[3,'3 : 1'],[2,'2 : 1']].forEach(([k,l])=>s.append(el('button',{'aria-pressed':String(S.ratio===k),onclick:()=>{S.ratio=k;try{localStorage.setItem('pd_ratio',k)}catch(e){};update();}},l)));
+  const r=S.ratio;
+  const rows=[['Tramadol PO','mg ÷ 10','BNF 10:1 (CDC 5:1)'],['MST / Kapanol / Mo IR / Mo syr','× 1',''],['Morphine IV/SC',`× ${r}`,'กิน : ฉีด'],['Fentanyl IV/SC (mcg)',`÷ 10 × ${r}`,'100 mcg ≈ morphine ฉีด 10 mg'],['Pethidine IV',`÷ 7.5 × ${r}`,'75 mg ≈ morphine ฉีด 10 mg'],['Fentanyl patch (mcg/h)','× 2.4','CDC 2022']];
+  $('#convTable').innerHTML='';
+  $('#convTable').append(el('thead',{},el('tr',{},el('th',{},'ยา'),el('th',{},'→ OME'),el('th',{},'หมายเหตุ'))),el('tbody',{},rows.map(x=>el('tr',{},x.map(c=>el('td',{},c))))));
+}
+
+// ---------- tabs ----------
+const TABS=[['meds','ยาเดิม','<path d="M10.5 3.5a4.95 4.95 0 0 1 7 7l-7 7a4.95 4.95 0 0 1-7-7z"/><path d="M7 7l7 7"/>'],
+  ['conv','แปลงยา','<path d="M7 7h11l-3-3M17 17H6l3 3"/>'],
+  ['tit','ปรับโดส','<path d="M4 18l5-6 4 3 7-9"/><path d="M20 6v5M20 6h-5"/>'],
+  ['sd','Syringe','<path d="M18 2l4 4M17 7l3-3M19 9L8.5 19.5 4 20l.5-4.5L15 5zM9 11l4 4"/>'],
+  ['info','ข้อมูล','<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>']];
+let cur='meds';
+function showTab(k){cur=k;document.querySelectorAll('.tab').forEach(s=>s.hidden=s.id!=='tab-'+k);
+  document.querySelectorAll('#tabBar button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.k===k)));
+  try{localStorage.setItem('pd_tab',k)}catch(e){} window.scrollTo({top:0});}
+TABS.forEach(([k,l,ic])=>{const b=el('button',{role:'tab','data-k':k,'aria-selected':'false'});b.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ic}</svg><span>${l}</span>`;b.addEventListener('click',()=>showTab(k));$('#tabBar').append(b);});
+
+function update(){
+  const p=pt(),T=totals();
+  const sedTxt=$('#sed').selectedOptions[0].textContent.split('·')[1].trim();
+  $('#ptSum').textContent=`อายุ ${p.age} · eGFR ${p.egfr??'-'} · RR ${p.rr} · ${sedTxt}${p.liver?' · ตับบกพร่อง':''}`;
+  document.querySelectorAll('#rows .row').forEach((rw,i)=>{const c=rowCalc(S.rows[i]);const o=rw.querySelectorAll('.f')[3];if(o)o.lastChild.textContent=fmt(c.ome);});
+  renderMedsSummary(T,p); renderConv(T,p); renderTit(T,p); renderSD(T,p); renderInfo();
+}
+$('#addRow').addEventListener('click',()=>{S.rows.push({drug:'mosyr',qty:2.5,freq:1,prn:true});renderRows();update();});
+['#age','#egfr','#rr','#sed','#liver','#pain','#sdVol','#sdDil'].forEach(s=>{$(s).addEventListener('input',update);$(s).addEventListener('change',update);});
+renderRows(); update();
+// theme toggle + stars
+const THEMES=[['system','ตามเครื่อง'],['light','กลางวัน'],['dark','คืนจันทร์']];
+let th='system'; try{th=localStorage.getItem('pd_theme')||'system'}catch(e){}
+const ICON={system:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18" />',light:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',dark:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>'};
+function applyTheme(){const r=document.documentElement; if(th==='system')r.removeAttribute('data-theme'); else r.setAttribute('data-theme',th);
+  const lab=THEMES.find(x=>x[0]===th)[1]; $('#themeBtn').title='ธีม: '+lab; $('#themeBtn').innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${ICON[th]}</svg><span>${lab}</span>`;}
+$('#themeBtn').addEventListener('click',()=>{const i=THEMES.findIndex(x=>x[0]===th);th=THEMES[(i+1)%3][0];try{localStorage.setItem('pd_theme',th)}catch(e){};applyTheme();});
+applyTheme();
+(function(){const box=$('#stars');let seed=7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+  for(let i=0;i<70;i++){const s=document.createElement('span');s.className='star';const z=0.8+rnd()*2.2;
+    s.style.cssText=`left:${rnd()*100}%;top:${rnd()*100}%;width:${z}px;height:${z}px;animation-delay:${-rnd()*4}s;animation-duration:${2.5+rnd()*3}s`;box.append(s);}})();
+let t0='meds'; try{t0=localStorage.getItem('pd_tab')||'meds'}catch(e){} if(!TABS.some(x=>x[0]===t0))t0='meds'; showTab(t0);
+if(matchMedia('(max-width:600px)').matches) $('#ptCard').open=false;
+})();
+</script>
+
+</body>
+</html>
