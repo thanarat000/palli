@@ -2,7 +2,7 @@
 
 เว็บแอพช่วยคำนวณยา opioid และ syringe driver สำหรับทีมดูแลผู้ป่วยแบบประคับประคอง (palliative care) โรงพยาบาลนครไทย ใช้ได้บน iPhone, Android และ iPad
 
-> **ต้นแบบ (v0.3) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
+> **ต้นแบบ (v0.4) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
 > เป็นเครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์เท่านั้น ผู้สั่งยาต้องพิจารณาและตรวจสอบซ้ำทุกครั้ง
 
 ## ความสามารถ
@@ -23,6 +23,10 @@
 
 Tramadol 50 mg · MST 10, 30 mg · Kapanol 20 mg · Mo IR 10 mg · Mo syr 2 mg/ml · Morphine ฉีด · Fentanyl ฉีด · Fentanyl patch 25 mcg/h · Pethidine IV (เป็นยาต้นทางเท่านั้น)
 
+ยานอกบัญชี (ใช้คำนวณยาเดิมของผู้ป่วยส่งต่อ): Fentanyl patch 12/50 mcg/h · MST 60 mg · Oxycodone IR/CR · Hydromorphone · Codeine · Tapentadol · Buprenorphine patch · Methadone (แจ้งเตือน ไม่แปลงให้)
+
+PRN ทางปากตั้งได้ q1h (NCCN/NICE) หรือ q2h ในหน้าข้อมูล · ยา SR (MST, Kapanol, OxyContin) ไม่ใช้เป็น PRN แอพจะเตือน
+
 ## ค่าแปลงที่ใช้ (→ OME mg/วัน)
 
 | ยา | ค่าแปลง | ที่มา |
@@ -33,6 +37,12 @@ Tramadol 50 mg · MST 10, 30 mg · Kapanol 20 mg · Mo IR 10 mg · Mo syr 2 mg/m
 | Fentanyl IV/SC (mcg) | ÷ 10 × 3 | IV fentanyl 100 mcg ≈ IV morphine 10 mg (NCCN) |
 | Pethidine IV | ÷ 7.5 × 3 | 75 mg ≈ IV morphine 10 mg |
 | Fentanyl patch (mcg/h) | × 2.4 | CDC 2022 |
+| Oxycodone PO | × 1.5 | EAPC/CDC |
+| Hydromorphone PO | × 4 | NCCN (CDC/EAPC 5) |
+| Codeine PO | mg ÷ 10 | BNF (CDC 0.15) |
+| Tapentadol PO | × 0.4 | CDC/BNF |
+| Buprenorphine patch (mcg/h) | × 2.4 | BNF |
+| Methadone | ไม่แปลง | ให้ผู้เชี่ยวชาญปรับ |
 | OME → patch | 60–134 = 25, 135–224 = 50, 225–314 = 75, 315–404 = 100 mcg/h | ฉลากยา fentanyl transdermal |
 
 ลด cross-tolerance 25% (50% ในผู้สูงอายุ ≥ 75 ปี, eGFR < 30, ง่วงมาก หรือตับบกพร่อง) เมื่อเปลี่ยนชนิด opioid; ไม่ลดเมื่อเปลี่ยน route ของ morphine, จาก tramadol หรือไป patch
