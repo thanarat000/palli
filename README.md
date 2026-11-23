@@ -2,7 +2,7 @@
 
 เว็บแอพช่วยคำนวณยา opioid และ syringe driver สำหรับทีมดูแลผู้ป่วยแบบประคับประคอง (palliative care) โรงพยาบาลนครไทย ใช้ได้บน iPhone, Android และ iPad
 
-> **ต้นแบบ (v0.8) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
+> **ต้นแบบ (v0.9) — ยังไม่ผ่านการรับรองจากคณะกรรมการเภสัชกรรมและการบำบัด (PTC) ห้ามใช้สั่งยาจริง**
 > เป็นเครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์เท่านั้น ผู้สั่งยาต้องพิจารณาและตรวจสอบซ้ำทุกครั้ง
 
 ## ความสามารถ
@@ -10,7 +10,7 @@
 | แท็บ | ทำอะไร |
 | --- | --- |
 | ยาเดิม | กรอกแบบ order: ยากินกี่ tab/cap/ml q กี่ชม., ยาฉีดเป็นครั้ง (q กี่ชม.), หยดต่อเนื่อง mg/ชม. หรือ SC syringe driver ต่อ 24 ชม., patch กี่แผ่น, PRN ใช้ไปกี่ครั้งใน 24 ชม. แต่ละรายการแสดงบรรทัด order + mg/วัน + OME แล้วรวมเป็น oral morphine equivalent (OME) |
-| แปลงยา | เปลี่ยนเป็น MST, Kapanol, Mo syr q4h, morphine/fentanyl SC 24 ชม. หรือ fentanyl patch พร้อมลด cross-tolerance อัตโนมัติ |
+| แปลงยา | เปลี่ยนเป็น MST, Kapanol, Mo syr q4h, morphine/fentanyl SC 24 ชม., fentanyl patch, tramadol หรือ oxycodone (นอกบัญชี) พร้อมลด cross-tolerance อัตโนมัติ และเลือกวิธีเปลี่ยนได้ 2 แบบ: stop & switch หรือค่อยๆ เปลี่ยน 3 ขั้น (cross-taper ขั้นละ 1/3, 1–3 วัน) |
 | ปรับโดส | เริ่มยาใหม่ (opioid-naïve) หรือ titrate ตาม pain score และ PRN ที่ใช้ |
 | Syringe | ผสม opioid กับ midazolam, haloperidol, hyoscine butylbromide, metoclopramide ออกเป็น order พร้อมวิธีผสม (ml แต่ละตัว + สารเจือจาง) และอัตราตามเครื่อง: syringe pump (ml/h), driver mm/24 ชม. (เช่น Graseby MS26), driver mm/ชม. (เช่น Graseby MS16A) ตั้งระยะเวลา 12/24/48/72 ชม. ได้ |
 | ข้อมูล | ตั้งอัตราส่วน morphine กิน:ฉีด (3:1 หรือ 2:1), ค่าแปลง และแหล่งอ้างอิง |
@@ -43,13 +43,13 @@ PRN ทางปากตั้งได้ q1h (NCCN/NICE) หรือ q2h ใ
 
 | ยา | ค่าแปลง | ที่มา |
 | --- | --- | --- |
-| Tramadol PO | mg ÷ 10 | BNF (CDC ใช้ 5:1) |
+| Tramadol PO | mg ÷ 10 (OME → tramadol × 10, สูงสุด 400 mg/วัน, 300 ถ้าอายุ > 75, 200 q12h ถ้า eGFR < 30) | BNF (CDC ใช้ 5:1) |
 | Morphine PO ทุกรูปแบบ | × 1 | |
 | Morphine IV/SC | × 3 (ตั้งเป็น 2 ได้) | NCCN 3:1, EAPC 2–3:1 |
 | Fentanyl IV/SC (mcg) | ÷ 10 × 3 | IV fentanyl 100 mcg ≈ IV morphine 10 mg (NCCN) |
 | Pethidine IV | ÷ 7.5 × 3 | 75 mg ≈ IV morphine 10 mg |
 | Fentanyl patch (mcg/h) | × 2.4 | CDC 2022 |
-| Oxycodone PO | × 1.5 | EAPC/CDC |
+| Oxycodone PO | × 1.5 (OME → oxycodone ÷ 1.5) | EAPC/CDC |
 | Hydromorphone PO | × 4 | NCCN (CDC/EAPC 5) |
 | Codeine PO | mg ÷ 10 | BNF (CDC 0.15) |
 | Tapentadol PO | × 0.4 | CDC/BNF |
@@ -75,6 +75,7 @@ PRN ทางปากตั้งได้ q1h (NCCN/NICE) หรือ q2h ใ
 ```
 npm i playwright
 node tests/conversion-cases.js index.html
+node tests/switch-cases.js index.html   # tramadol/oxycodone และ cross-taper
 ```
 
 ## แหล่งอ้างอิง

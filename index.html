@@ -95,6 +95,11 @@ button{font:inherit;cursor:pointer;border:none;border-radius:14px;min-height:46p
 .alert.stop{background:var(--stop-soft);color:var(--ink);border-left:4px solid var(--stop)}
 .alert.info{background:var(--sage-soft);color:var(--ink);border-left:4px solid var(--sage)}
 .alerts{display:flex;flex-direction:column;gap:8px}
+.taper{border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.taper h4{margin:0;font-size:1rem}
+.taper .stp{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:12px;background:var(--sage-soft)}
+.taper .stp b{font-size:.92rem}
+.taper .stp span{font-size:.9rem}
 .chk{display:flex;align-items:center;gap:10px;color:var(--ink);font-size:.95rem;min-height:40px}
 .chk input{width:22px;height:22px;min-height:0;accent-color:var(--sage);flex:none}
 .chks{display:grid;grid-template-columns:1fr;gap:2px;margin-top:4px}
@@ -256,6 +261,7 @@ details[open] .chev{transform:rotate(180deg)}
       <div><h2>แปลงยา (convert)</h2><p class="note">ใช้ OME จากหน้า "ยาเดิม" = <b id="cvOme">0</b> mg/วัน</p></div>
       <div><div class="note" style="margin-bottom:6px">เปลี่ยนเป็น</div><div class="seg" id="cvTarget"></div></div>
       <div><div class="note" style="margin-bottom:6px">ลดโดสจาก incomplete cross-tolerance</div><div class="seg" id="cvRed"></div></div>
+      <div><div class="note" style="margin-bottom:6px">วิธีเปลี่ยนยา</div><div class="seg" id="cvMode"></div></div>
     </div>
     <div class="card" id="cvOut"></div>
   </section>
@@ -329,7 +335,7 @@ details[open] .chev{transform:rotate(180deg)}
     <div class="alert stop"><b>!</b><span>ต้นแบบสำหรับทดสอบ ยังไม่ผ่านการรับรองจาก PTC ห้ามใช้สั่งยาจริง ผลทุกค่าต้องให้แพทย์/เภสัชกรตรวจซ้ำ</span></div>
   </section>
 
-  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.8</p>
+  <p class="disclaimer">เครื่องมือช่วยคำนวณสำหรับบุคลากรการแพทย์ · ผู้สั่งยาต้องพิจารณาทุกครั้ง · เวอร์ชันต้นแบบ 0.9</p>
 </div>
 
 <nav class="tabs" role="tablist" aria-label="เมนู"><div class="in" id="tabBar"></div></nav>
@@ -343,7 +349,7 @@ const fmt=(n,d=1)=>{if(!isFinite(n))return '0';const r=Math.round(n*Math.pow(10,
 const S={ratio:3, rows:[
   {drug:'mst30',qty:1,int:12,prn:false},
   {drug:'mosyr',qty:3,cnt:3,prn:true}
-], target:'mst', red:'auto', tiForm:'mst', sdOp:'morphine', sdOpDose:null, addons:{}};
+], target:'mst', red:'auto', mode:'direct', tiForm:'mst', sdOp:'morphine', sdOpDose:null, addons:{}};
 S.prnInt=1;
 try{const r=localStorage.getItem('pd_ratio'); if(r) S.ratio=+r; const q=localStorage.getItem('pd_prn'); if(q) S.prnInt=+q;}catch(e){}
 const irAlt=mg=>{if(mg<8)return '';const n=Math.round(mg/10);return Math.abs(n*10-mg)/mg<=0.25?` · หรือ Mo IR 10 mg ${n} tab (${n*10} mg)`:'';};
@@ -578,8 +584,8 @@ function renderMedsSummary(T,p){
 }
 
 // ---------- conversion engine ----------
-const TARGETS=[['mst','MST q12h'],['kap','Kapanol q12h'],['syr','Mo syr q4h'],['mocsci','Morphine SC 24 ชม.'],['fentcsci','Fentanyl SC 24 ชม.'],['patch','Fentanyl patch']];
-const TCLS={mst:'morphine',kap:'morphine',syr:'morphine',mocsci:'morphine',fentcsci:'fentanyl',patch:'fentanyl'};
+const TARGETS=[['mst','MST q12h'],['kap','Kapanol q12h'],['syr','Mo syr q4h'],['mocsci','Morphine SC 24 ชม.'],['fentcsci','Fentanyl SC 24 ชม.'],['patch','Fentanyl patch'],['tram','Tramadol'],['oxy','Oxycodone (นอกบัญชี)']];
+const TCLS={mst:'morphine',kap:'morphine',syr:'morphine',mocsci:'morphine',fentcsci:'fentanyl',patch:'fentanyl',tram:'tramadol',oxy:'oxycodone'};
 function autoRed(T,target,p){
   if(target==='patch')return 0;
   const tc=TCLS[target];
@@ -633,6 +639,46 @@ function convert(ome,target,red,p){
     const pr=syrPRN(m*2.4,0.1); out.lines.push([`Mo syr 2 mg/ml ${fmt(pr.ml)} ml (${pr.mg} mg) PO q${S.prnInt}h PRN`,'≈ 10% ของ OME เทียบเท่า'+irAlt(pr.mg)]);
     out.alerts.push(['info','ติดแผ่นพร้อม MST มื้อสุดท้าย (หรือคงยาฉีดต่อเนื่องอีก 12 ชม.) แผ่นออกฤทธิ์เต็มที่ใน 12–24 ชม. ปรับโดสได้ไม่เร็วกว่าทุก 72 ชม. หลีกเลี่ยงความร้อนบริเวณแผ่น']);
   }
+  if(target==='tram'){
+    // BNF: oral tramadol 10 mg ≈ oral morphine 1 mg. Max 400 mg/day (300 if age > 75; 200 mg/day q12h if eGFR < 30).
+    const max=p.egfr!=null&&p.egfr<30?200:p.age>75?300:400;
+    const raw=eff*10; out.steps.push(`× 10 = tramadol ${fmt(raw)} mg/วัน (BNF 10:1) · ขนาดสูงสุดสำหรับผู้ป่วยนี้ ${max} mg/วัน`);
+    if(raw>max){out.alerts.push(['stop',`ต้องใช้ tramadol ${fmt(raw)} mg/วัน เกินขนาดสูงสุด ${max} mg/วัน: tramadol ไม่พอสำหรับระดับปวดนี้ ให้ใช้ strong opioid (morphine) ต่อ`]);return out;}
+    const ints=p.egfr!=null&&p.egfr<30?[12]:[6,8,12];let int=0,each=0;
+    for(const h of ints){const e=roundStep(raw/(24/h),50);if(e>=50){int=h;each=e;break;}}
+    if(!each){out.alerts.push(['info','โดสต่ำกว่า tramadol 50 mg q12h: ให้ tramadol 50 mg PRN หรือหยุด opioid ได้']);out.lines.push(['Tramadol 50 mg 1 cap PO q8h PRN','ใช้เมื่อปวด']);return out;}
+    const daily=each*24/int; out.achieved=daily/10;
+    out.steps.push(`÷ ${24/int} มื้อ = ${fmt(raw/(24/int))} mg → ปัดเป็น ${each} mg q${int}h (ทีละ 50 mg)`);
+    out.lines.push([`Tramadol 50 mg ${each/50} cap (${each} mg) PO q${int}h`,`= ${daily} mg/วัน`]);
+    const room=max-daily;
+    if(room>=50) out.lines.push([`Tramadol 50 mg 1 cap PO q6h PRN`,`รวมทั้งวันไม่เกิน ${max} mg`]);
+    else out.alerts.push(['warn','ไม่มีที่เหลือให้ PRN tramadol (ชนขนาดสูงสุด): ถ้ายังต้อง PRN บ่อย ให้กลับไปใช้ morphine']);
+    out.alerts.push(['warn','Tramadol: ลด seizure threshold · เสี่ยง serotonin syndrome เมื่อใช้ร่วม SSRI/SNRI/TCA/MAOI · hyponatraemia, hypoglycaemia · ฤทธิ์แก้ปวดขึ้นกับ CYP2D6']);
+    out.alerts.push(['info','ใช้ tramadol เป็น step-down เมื่อปวดลดลงมากแล้ว (เช่น หลังฉายรังสี/nerve block) ไม่ใช้ร่วมกับ strong opioid']);
+  }
+  if(target==='oxy'){
+    // Oral oxycodone 1 mg ≈ oral morphine 1.5 mg (EAPC/CDC/BNF).
+    const raw=eff/1.5; out.steps.push(`÷ 1.5 = oxycodone ${fmt(raw)} mg/วัน`);
+    const half=raw/2, dose=roundStep(half,10);
+    if(dose>=10){
+      out.steps.push(`÷ 2 = ${fmt(half)} mg ต่อมื้อ → ปัดเป็น ${dose} mg q12h (ทีละ 10 mg)`);
+      out.achieved=dose*2*1.5;
+      const n40=Math.floor(dose/40),r1=dose-n40*40,n20=Math.floor(r1/20),n10=Math.round((r1-n20*20)/10);
+      const tabs=[n40&&`40 mg ${n40} tab`,n20&&`20 mg ${n20} tab`,n10&&`10 mg ${n10} tab`].filter(Boolean).join(' + ');
+      out.lines.push([`Oxycodone CR (OxyContin) ${tabs} PO q12h`,`= ${dose*2} mg/วัน · ห้ามหัก/บด/เคี้ยว`]);
+    } else {
+      let int=0,each=0;for(const h of [4,6,8]){const e=roundStep(raw/(24/h),5);if(e>=5){int=h;each=e;break;}}
+      if(!each){out.steps.push(`oxycodone ${fmt(raw)} mg/วัน ต่ำกว่า OxyNorm 5 mg q8h`);out.alerts.push(['warn','โดสต่ำกว่าแคปซูล OxyNorm 5 mg ที่ให้ตามเวลาได้: ใช้ oxycodone IR 5 mg PRN หรือ oxycodone liquid 1 mg/ml ถ้ามี หรือใช้ morphine แทน']);out.lines.push(['Oxycodone IR (OxyNorm) 5 mg PO q4h PRN','ใช้เมื่อปวด']);return out;}
+      out.steps.push(`โดสต่ำกว่า OxyContin 10 mg q12h → oxycodone IR ${fmt(raw/(24/int))} mg q${int}h → ${each} mg (OxyNorm 5 mg/cap)`);
+      out.achieved=each*(24/int)*1.5;
+      out.lines.push([`Oxycodone IR (OxyNorm) 5 mg ${each/5} cap (${each} mg) PO q${int}h`,`= ${each*24/int} mg/วัน`]);
+    }
+    const pr=Math.max(5,roundStep(out.achieved/1.5/6,5));
+    out.lines.push([`Oxycodone IR (OxyNorm) ${pr} mg PO q${S.prnInt}h PRN`,'breakthrough ≈ 1/6 ของโดสต่อวัน']);
+    out.alerts.push(['info','Oxycodone อยู่นอกบัญชี รพ.นครไทย: ตรวจว่าผู้ป่วยมียาเองหรือจัดหาได้ก่อนสั่ง']);
+    if(p.egfr!=null&&p.egfr<30) out.alerts.push(['warn','eGFR < 30: oxycodone และ metabolite สะสมได้ ลดโดส ยืดช่วงเวลา หรือใช้ fentanyl']);
+    if(p.liver) out.alerts.push(['warn','ตับบกพร่องรุนแรง: ลดโดสเริ่มต้นเหลือ 1/3–1/2 และเฝ้าระวัง sedation']);
+  }
   if(out.achieved){const diff=(out.achieved-eff)/eff*100; out.steps.push(`ได้จริง ≈ ${fmt(out.achieved)} mg OME/วัน (${diff>=0?'+':''}${fmt(diff,0)}% จากค่าคำนวณ)`); if(Math.abs(diff)>20&&target!=='patch')out.alerts.push(['warn','โดสที่ปัดได้ต่างจากค่าคำนวณมากกว่า 20% พิจารณารูปแบบยาอื่น']);}
   return out;
 }
@@ -649,6 +695,7 @@ function renderResult(box,title,res,extraAlerts){
       if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>sel(o));}else sel(o);});
     box.append(el('div',{},btn));
   }
+  if(res.taper) box.append(el('div',{class:'taper'},el('h4',{},res.taper.title),res.taper.steps.map(([a,b])=>el('div',{class:'stp'},el('b',{},a),el('span',{},b)))));
   if(res.steps.length) box.append(el('details',{},el('summary',{class:'note',style:'cursor:pointer'},'ดูวิธีคำนวณ'),el('ol',{class:'steps'},res.steps.map(s=>el('li',{},s)))));
   const al=el('div',{class:'alerts'}); renderAlerts(al,res.alerts.concat(extraAlerts||[])); box.append(al);
 }
@@ -670,7 +717,34 @@ function renderConv(T,p){
   if(T.hasPatch&&S.target!=='patch'&&S.target!=='fentcsci') extra.push(['warn','เลิก fentanyl patch: ยายังค้างในผิวหนัง ~17 ชม.ขึ้นไป เริ่มยาใหม่ 12 ชม.หลังลอกแผ่น ใช้ PRN ช่วงรอยต่อ']);
   if(S.red!=='auto'&&+S.red<auto) extra.push(['warn',`เลือกลดน้อยกว่าค่าแนะนำ (${auto}%)`]);
   if(S.target==='patch'&&T.total>0) extra.push(['info','ใช้ patch เมื่อปวดคงที่แล้วเท่านั้น ไม่ใช้ titrate ปวดเฉียบพลัน']);
+  const ms=$('#cvMode'); ms.innerHTML='';
+  [['direct','เปลี่ยนทันที (stop & switch)'],['taper','ค่อยๆ เปลี่ยน 3 ขั้น']].forEach(([k,l])=>ms.append(el('button',{'aria-pressed':String(S.mode===k),onclick:()=>{S.mode=k;update();}},l)));
+  res.taper=taperPlan(T,S.target,red,p,res);
+  if(T.total>=200&&S.mode==='direct'&&!T.hasPatch&&S.target!=='patch'&&auto>0) extra.push(['info','OME ≥ 200 mg/วัน: พิจารณา "ค่อยๆ เปลี่ยน 3 ขั้น" เพื่อลดความเสี่ยงปวดกลับหรือ toxicity ระหว่างเปลี่ยน']);
   renderResult($('#cvOut'),'คำสั่งยาที่แนะนำ',res,extra);
+}
+// Switching strategy: stop & switch for most cases; a stepwise cross-taper (about 1/3 per step,
+// each step 1–3 days) for high doses, frail patients, or when a pain flare/withdrawal is a concern.
+function taperPlan(T,target,red,p,res){
+  if(T.total<=0||!res.lines.length) return null;
+  const tc=TCLS[target], sameDrug=[...T.classes].every(c=>c===tc);
+  if(S.mode==='direct'){
+    const st=[];
+    if(sameDrug) st.push(['เปลี่ยนรูปแบบยาเดิม','ให้รูปแบบใหม่เวลามื้อถัดไปของยาเดิม ไม่ต้องลดโดส']);
+    else if(target==='patch') st.push(['ติดแผ่น','ดูคำแนะนำช่วงรอยต่อใน order ด้านบน']);
+    else if(T.hasPatch) st.push(['ลอกแผ่น','เริ่มยาใหม่ประมาณ 12 ชม. หลังลอกแผ่น ใช้ PRN ช่วงรอยต่อ']);
+    else st.push(['หยุดยาเดิม','งดยาเดิมทั้งหมด (ยกเว้น PRN ของยาใหม่)'],['เริ่มยาใหม่','ให้ยาใหม่เต็มโดสเวลามื้อถัดไปของยาเดิม'],['ติดตาม','ประเมิน pain score, POSS และ RR ทุกวันใน 2–3 วันแรก ใช้ PRN ของยาใหม่ถ้าปวด']);
+    return {title:'ขั้นตอนเปลี่ยนยา (stop & switch)',steps:st};
+  }
+  if(target==='patch'||T.hasPatch) return {title:'ค่อยๆ เปลี่ยน',steps:[['ไม่ใช้กับ fentanyl patch','patch ออกฤทธิ์และหมดฤทธิ์ช้าอยู่แล้ว ให้ใช้ขั้นตอนเปลี่ยนตาม order ด้านบน']]};
+  if(sameDrug) return {title:'ค่อยๆ เปลี่ยน',steps:[['ไม่จำเป็น','เป็นยาตัวเดิมเปลี่ยนแค่รูปแบบ ให้เปลี่ยนทันทีได้']]};
+  const first=k=>{const r=convert(T.total*k,target,red,p);const l=r.lines.length?r.lines[0][0]:'';return !l?'โดสต่ำกว่าเม็ดเล็กสุด ใช้ PRN ของยาใหม่แทน':/PRN/.test(l)?`โดสต่ำกว่าเม็ดเล็กสุด ให้ ${l} แทน`:l;};
+  const old=k=>`ยาเดิมทุกรายการลดเหลือ ${k} ของโดสประจำ (≈ OME ${fmt(T.sch*(k==='2/3'?2/3:1/3))} mg/วัน)`;
+  return {title:'ค่อยๆ เปลี่ยน 3 ขั้น (cross-taper)',steps:[
+    ['ขั้นที่ 1 · วันที่ 1–3',`${old('2/3')} + ยาใหม่ 1/3: ${first(1/3)}`],
+    ['ขั้นที่ 2 · วันที่ 4–6',`${old('1/3')} + ยาใหม่ 2/3: ${first(2/3)}`],
+    ['ขั้นที่ 3 · วันที่ 7 เป็นต้นไป',`หยุดยาเดิม ให้ยาใหม่เต็มโดสตาม order ด้านบน`],
+    ['ระหว่างเปลี่ยน','ใช้ PRN ของยาใหม่ · ไปขั้นถัดไปเมื่อ pain score คงที่และ POSS ≤ 2 · ขยับเร็วขึ้น (ขั้นละ 1 วัน) ถ้าเปลี่ยนเพราะ toxicity · ปวดมาก/ง่วงมาก ให้คงขั้นเดิมแล้วปรับ']]};
 }
 
 // ---------- TAB 3 ----------
@@ -911,7 +985,7 @@ $('#clearBtn').addEventListener('click',e=>{e.preventDefault();e.stopPropagation
   if(!clrT){b.textContent='กดอีกครั้งเพื่อล้าง';clrT=setTimeout(()=>{b.textContent='ล้างข้อมูล';clrT=null;},3000);return;}
   clearTimeout(clrT);clrT=null;b.textContent='ล้างแล้ว';setTimeout(()=>b.textContent='ล้างข้อมูล',1500);
   ['#age','#egfr','#rr'].forEach(x=>$(x).value='');$('#sed').value='1';$('#pps').value='';['#pin','#cyan','#trig','#myo','#liver'].forEach(x=>$(x).checked=false);$('#pain').value=0;
-  S.rows=[];S.sdOpDose=null;S.target='mst';S.red='auto';S.sdOp='morphine';
+  S.rows=[];S.sdOpDose=null;S.target='mst';S.red='auto';S.mode='direct';S.sdOp='morphine';
   ADD.forEach(a=>S.addons[a.k]={on:a.k==='mida'||a.k==='halo',dose:a.def,conc:a.conc});
   const ab=$('#addons');ab.innerHTML='';delete ab.dataset.built;
   $('#ptCard').open=true;renderRows();update();showTab('meds');});
